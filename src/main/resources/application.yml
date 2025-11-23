@@ -10,7 +10,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
+    url: jdbc:postgresql://database:5432/mydb
     username: postgres
     password: postgres
   jpa:
@@ -18,14 +18,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
 jwt:
   secret: "my-super-secret-key-which-should-be-long"
-  issuer: "bankcards-api"
   expiration: 3600000
-
-security:
-  password:
-    encoder:
-      strength: 10
 
 

@@ -1,8 +1,6 @@
 package com.example.bankcards.util.auxiliaryclasses;
 
-import lombok.Data;
 
-@Data
 public class ErrorResponse {
 
     private int status;
@@ -15,5 +13,21 @@ public class ErrorResponse {
     }
 
     public ErrorResponse() {
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

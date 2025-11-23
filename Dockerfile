@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM eclipse-temurin:21-jdk
 
 LABEL authors="Ssneckk (Adil Soltanov)"
 

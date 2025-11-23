@@ -10,15 +10,15 @@
 version: "3.8"
 
 services:
-#  bank_rest:
-#    build: .
-#    container_name: bank_rest_app
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - db
-#    networks:
-#      - backend
+  bank_rest:
+    build: .
+    container_name: bank_rest_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - backend
 
   database:
     image: postgres:17

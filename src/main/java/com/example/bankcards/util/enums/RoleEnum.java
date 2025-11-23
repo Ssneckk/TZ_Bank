@@ -2,8 +2,8 @@ package com.example.bankcards.util.enums;
 
 public enum RoleEnum {
 
-    ADMIN("Админ"),
-    USER("Пользователь");
+    ROLE_ADMIN("Админ"),
+    ROLE_USER("Пользователь");
 
     private final String label;
 

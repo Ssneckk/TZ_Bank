@@ -1,7 +1,6 @@
 package com.example.bankcards.util.auxiliaryclasses;
 
 import com.example.bankcards.entity.User;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
