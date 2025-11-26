@@ -4,7 +4,7 @@ import com.example.bankcards.dto.RoleDTO;
 import com.example.bankcards.dto.UserDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.util.auxiliaryclasses.AuthAndRegistrRequest;
+import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterRequest;
 import com.example.bankcards.util.converters.UserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +26,9 @@ public class UserConverterImpls implements UserConverter {
     @Override
     public UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
+        userDTO.setBlocked(user.getBlocked());
 
         //Безопасно конвертируем наш List<Role> в List<RoleDTO>
         List<RoleDTO> roleDTOs = user.getRoles() == null
@@ -39,10 +41,10 @@ public class UserConverterImpls implements UserConverter {
     }
 
     @Override
-    public User convertToUser(AuthAndRegistrRequest authAndRegistrRequest) {
+    public User convertToEntity(AuthAndRegisterRequest authAndRegisterRequest) {
         User user = new User();
-        user.setEmail(authAndRegistrRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(authAndRegistrRequest.getPassword()));
+        user.setEmail(authAndRegisterRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(authAndRegisterRequest.getPassword()));
         return user;
     }
 

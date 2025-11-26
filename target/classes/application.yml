@@ -20,9 +20,20 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+  security:
+
 
 jwt:
   secret: "my-super-secret-key-which-should-be-long"
   expiration: 3600000
 
+aes:
+  secret-key: mysupersecretkey
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+    url: /docs/open-api.yaml

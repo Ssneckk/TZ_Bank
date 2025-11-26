@@ -1,0 +1,963 @@
+openapi: 3.0.3
+info:
+  title: Система Управления Банковскими Картами
+  version: 0.0.1
+  description: позже
+servers:
+  - url: http://localhost:8080/api/
+    description: Dev server
+
+paths:
+  /login:
+    post:
+      security: []
+      summary: Аутентификация
+      operationId: login
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthAndRegisterRequest'
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "jwt-token-example"
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ValidationErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cards:
+    get:
+      summary: Получение карт пользователя
+      operationId: get-users-cards
+      tags:
+        - User-cards
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы (0-indexed)
+          required: false
+          schema:
+            type: integer
+            example: 0
+        - name: size
+          in: query
+          description: Количество элементов на странице
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: sort
+          in: query
+          description: Поле и направление сортировки, например cardId,asc
+          required: false
+          schema:
+            type: string
+            example: Id,asc
+      responses:
+        '200':
+          description: Успешное получение списка карт пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SimpleCardRecordDTO'
+                  page:
+                    type: integer
+                    example: 0
+                  size:
+                    type: integer
+                    example: 10
+                  totalElements:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 5
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cards/{cardId}:
+    get:
+      summary: Получение карты пользователя по ID
+      operationId: get-users-card-byCardId
+      tags:
+        - User-cards
+      parameters:
+        - name: cardId
+          in: path
+          description: ID карты пользователя
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешное получение карты пользователя по ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullCardRecordDTO'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cards/{cardId}/block-request:
+    post:
+      summary: Отправить запрос на блокировку карты
+      operationId: make-card-block-request
+      tags:
+        - User-cards
+      parameters:
+        - name: cardId
+          in: path
+          description: ID карты пользователя
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешная отправка запроса на блокировку карты
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardBlockRequest"
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /cards/transfer:
+    post:
+      summary: Транзакции между своими картами
+      operationId: transfer-between-own-cards
+      tags:
+        - User-cards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+          '200':
+            description: Успешная транзакция между своими картами
+            content:
+              application/json:
+                schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Транзакция успешно завершена"
+          '401':
+            description: Ошибка аутентификации
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '403':
+            description: Ошибка авторизации
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '400':
+            description: Ошибка запроса
+            content:
+              application/json:
+                schema:
+                  type: object
+                  oneOf:
+                    - $ref: '#/components/schemas/ErrorResponse'
+                    - $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /admin/users:
+    get:
+      summary: Получение всех пользователей с пагинацией
+      operationId: get-users
+      tags:
+        - Admin-users
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы (0-indexed)
+          required: false
+          schema:
+            type: integer
+            example: 0
+        - name: size
+          in: query
+          description: Количество элементов на странице
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: sort
+          in: query
+          description: Поле и направление сортировки, например email,asc
+          required: false
+          schema:
+            type: string
+            example: email,asc
+      responses:
+        '200':
+          description: Успешное получение списка пользователей с пагинацией
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserDTO'
+                  page:
+                    type: integer
+                    example: 0
+                  size:
+                    type: integer
+                    example: 10
+                  totalElements:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 5
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Регистрация новых пользователей
+      operationId: register
+      tags:
+        - Admin-users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthAndRegisterRequest'
+      responses:
+        '200':
+          description: Успешная регистрация пользователя
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /admin/users/{userId}:
+    get:
+      summary: Получение пользователя по ID
+      operationId: get-user-byId
+      tags:
+        - Admin-users
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешное получение пользователя по ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+
+  /admin/users/{userId}/block:
+    patch:
+      summary: Заблокировать/разблокировать пользователя по ID
+      operationId: block-user
+      tags:
+        - Admin-users
+      parameters:
+          - name: userId
+            in: path
+            description: ID пользователя
+            required: true
+            schema:
+              type: integer
+              example: 1
+          - name: blockOrNot
+            in: query
+            description: Заблокировать(true) или разблокировать(false)
+            required: true
+            schema:
+              type: boolean
+              example: false
+      responses:
+        '200':
+          description: Успешная блокировка пользователя по ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Пользователь с ID: 1 заблокирован/разблокирован"
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards:
+    get:
+      summary: Получение карт пользователей с пагинацией
+      tags:
+        - Admin-cards
+      operationId: get-cards
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы (0-indexed)
+          required: false
+          schema:
+            type: integer
+            example: 0
+        - name: size
+          in: query
+          description: Количество элементов на странице
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: sort
+          in: query
+          description: Поле и направление сортировки, например id,asc
+          required: false
+          schema:
+            type: string
+            example: id,asc
+      responses:
+        '200':
+          description: Успешное получение списка карт с пагинацией
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SimpleCardRecordDTO'
+                  page:
+                    type: integer
+                    example: 0
+                  size:
+                    type: integer
+                    example: 10
+                  totalElements:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 5
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards/{userId}:
+    post:
+      summary: Создание карты для пользователя
+      tags:
+        - Admin-cards
+      operationId: create-card-for-user
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешное создание карты для пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullCardRecordDTO'
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards/{cardId}:
+    delete:
+      summary: Удаление карты пользователя
+      tags:
+        - Admin-cards
+      operationId: delete-users-card
+      parameters:
+        - name: cardId
+          in: path
+          description: ID карты пользователя
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Карта успешно удалена
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards/{cardId}/block:
+    patch:
+      summary: Блокировка карты по ID
+      tags:
+        - Admin-cards
+      operationId: block-users-card
+      parameters:
+        - name: cardId
+          in: path
+          description: ID карты
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешная блокировка карты пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Карта с ID: 1 заблокирована"
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards/{cardId}/activate:
+    patch:
+      summary: Активация карты по ID
+      tags:
+        - Admin-cards
+      operationId: activate-users-card
+      parameters:
+        - name: cardId
+          in: path
+          description: ID карты
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешная активация карты пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Карта с ID: 1 активирована"
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards/block-requests:
+    get:
+      summary: Получение запросов на блокировку карт с пагинацией
+      tags:
+        - Admin-cards
+      operationId: get-block-card-requests
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы (0-indexed)
+          required: false
+          schema:
+            type: integer
+            example: 0
+        - name: size
+          in: query
+          description: Количество элементов на странице
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: sort
+          in: query
+          description: Поле и направление сортировки, например requestAt,asc
+          required: false
+          schema:
+            type: string
+            example: requestedAt,asc
+      responses:
+        '200':
+          description: Успешное получение списка запросов на блокировку карты с пагинацией
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CardBlockRequest'
+                  page:
+                    type: integer
+                    example: 0
+                  size:
+                    type: integer
+                    example: 10
+                  totalElements:
+                    type: integer
+                    example: 50
+                  totalPages:
+                    type: integer
+                    example: 5
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+  /admin/cards/block-requests/{requestId}:
+    delete:
+      summary: Блокировка карты по заявке
+      tags:
+        - Admin-cards
+      operationId: block-users-card-by-request
+      parameters:
+        - name: requestId
+          in: path
+          description: ID заявки на блокировку
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Успешная блокировка карты по запросу
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Карта с ID: 1 заблокирована"
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Ошибка авторизации
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthAndRegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        password:
+          type: string
+          example: "qwerty123"
+      required:
+        - email
+        - password
+
+    TransferRequest:
+      type: object
+      properties:
+        fromCardId:
+          type: integer
+          example: 1
+        toCardId:
+          type: integer
+          example: 2
+        amount:
+          type: string
+          example: "100.50"
+      required:
+        - fromCardId
+        - toCardId
+        - amount
+
+    CardBlockRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cardId:
+          type: integer
+          example: 1
+        requestedUserId:
+          type: integer
+          example: 1
+        requestedAt:
+          type: string
+          example: "2025-11-26"
+      required:
+        - id
+        - cardId
+        - requestedUserId
+        - requestedAt
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: номер
+        message:
+          type: string
+          example: "Произошла ошибка"
+      required:
+        - status
+        - message
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Произошла ошибка валидации"
+        fieldErrors:
+          type: object
+          description: "Карта ошибок валидации"
+          additionalProperties:
+            type: string
+          example:
+            email: "Неверный формат email"
+            password: "Пароль слишком короткий"
+      required:
+        - status
+        - message
+        - fieldErrors
+
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: "example@mail.ru"
+        blocked:
+          type: boolean
+          example: false
+        roles:
+          type: array
+          description: Список ролей пользователя
+          items:
+            $ref: '#/components/schemas/RoleDTO'
+      required:
+        - id
+        - email
+        - blocked
+        - roles
+
+    RoleDTO:
+      type: object
+      properties:
+        role_name:
+          type: string
+          description: Название роли
+          example: "ADMIN"
+      required:
+        - role_name
+
+    FullCardRecordDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cardNumber:
+          type: string
+          example: "**** **** **** 5555"
+        expireDate:
+          type: string
+          example: "12/25"
+        status:
+          type: string
+          example: ACTIVE
+        balance:
+          type: string
+          example: "0.00"
+      required:
+        - id
+        - cardNumber
+        - expireDate
+        - status
+        - balance
+
+    SimpleCardRecordDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cardNumber:
+          type: string
+          example: "**** **** **** 5555"
+        status:
+          type: string
+          example: ACTIVE
+      required:
+        - id
+        - cardNumber
+        - status
+
+security:
+  - BearerAuth: []

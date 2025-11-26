@@ -2,9 +2,10 @@ package com.example.bankcards.util.enums;
 
 public enum CardStatusEnum {
 
-    ACTIVE("Карта активна."),
-    BLOCKED("Карта заблокирована!"),
-    EXPIRED("Срок действия карты истёк!");
+    ACTIVE("Карта активна"),
+    BLOCKED("Карта заблокирована"),
+    EXPIRED("Срок действия карты истёк"),
+    DELETED("Карта удалена");
 
     private final String label;
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -28,9 +29,16 @@ public class User {
     @Size(min = 8, message = "Пароль должен содержать минимум 8 символов")
     private String password;
 
+    @NotNull(message = "blocked не должен быть пустым")
+    private Boolean blocked = false;
+
     @OneToMany(mappedBy = "user",orphanRemoval = true, cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user",orphanRemoval = true, cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Card> cards;
 
     public User() {
     }
@@ -57,6 +65,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 
     public List<Role> getRoles() {

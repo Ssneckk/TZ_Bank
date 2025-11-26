@@ -1,6 +1,6 @@
 package com.example.bankcards.security.jwt;
 
-import com.example.bankcards.util.auxiliaryclasses.UserDetailsImpls;
+import com.example.bankcards.security.UserDetailsImpls;
 
 public interface JwtService {
 

@@ -5,11 +5,31 @@ import java.util.Objects;
 
 public class UserDTO {
 
+    private Integer id;
+
     private String email;
+
+    private Boolean blocked;
 
     private List<RoleDTO> roles;
 
     public UserDTO() {
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
     }
 
     public String getEmail() {
@@ -31,7 +51,9 @@ public class UserDTO {
     @Override
     public String toString() {
         return "UserDTO{" +
-                "email='" + email + '\'' +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", blocked=" + blocked +
                 ", roles=" + roles +
                 '}';
     }
@@ -40,11 +62,11 @@ public class UserDTO {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         UserDTO userDTO = (UserDTO) o;
-        return Objects.equals(email, userDTO.email) && Objects.equals(roles, userDTO.roles);
+        return Objects.equals(id, userDTO.id) && Objects.equals(email, userDTO.email) && Objects.equals(blocked, userDTO.blocked) && Objects.equals(roles, userDTO.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, roles);
+        return Objects.hash(id, email, blocked, roles);
     }
 }

@@ -26,6 +26,11 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+              - column:
+                  name: blocked
+                  type: boolean
+                  constraints:
+                    nullable: false
 
   - changeSet:
       id: create-role
@@ -77,10 +82,9 @@ databaseChangeLog:
                     nullable: false
 
               - column:
-                  name: card_number
-                  type: char(16)
+                  name: card_number_encrypted
+                  type: varchar(500)
                   constraints:
-                    unique: true
                     nullable: false
 
               - column:
@@ -111,3 +115,29 @@ databaseChangeLog:
             referencedTableName: user
             referencedColumnNames: id
             constraintName: fk_card_user
+
+  - changeSet:
+      id: create-table-card-block-request
+      author: Ssneckk
+      changes:
+        - createTable:
+            tableName: card_block_request
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_id
+                  type: int
+              - column:
+                  name: requested_user_id
+                  type: int
+              - column:
+                  name: requested_at
+                  type: date
+
+
