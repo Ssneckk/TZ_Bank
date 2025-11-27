@@ -1,12 +1,11 @@
 package com.example.bankcards.service.card.impls;
 
-import com.example.bankcards.dto.MyRecords;
+import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.TokenException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.card.CardCreationService;
 import com.example.bankcards.util.auxiliaryclasses.crypto.CryptoUtil;
 import com.example.bankcards.util.converters.CardConverter;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
@@ -35,7 +35,7 @@ public class CardCreationServiceImpl implements CardCreationService {
 
     //Я увидел в интернете, что это надо делать через алгоритм Луна,
     //для задачи на работе я бы разобрался, пока что реализовал генерацию карты так.
-    private String generateCardNumber() {
+    public String generateCardNumber() {
 
         int prefix = 4231;
 
@@ -50,7 +50,7 @@ public class CardCreationServiceImpl implements CardCreationService {
 
     @Override
     @Transactional
-    public MyRecords.fullCardRecordDTO createCard(Integer user_id) throws Exception{
+    public FullCardRecordDTO createCard(Integer user_id) throws Exception{
 
         User user = userRepository.findById(user_id)
                 .orElseThrow(()-> new TokenException("User с id из токена: "
@@ -65,6 +65,8 @@ public class CardCreationServiceImpl implements CardCreationService {
         LocalDate expiry_date = LocalDate.now().plusYears(1);
 
         Card newCard = new Card(expiry_date,user,cardNumber,last4);
+
+        newCard.setBalance(BigDecimal.valueOf(50000.00));
 
         Card savedCard = cardRepository.save(newCard);
 

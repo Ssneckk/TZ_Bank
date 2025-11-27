@@ -1,11 +1,12 @@
 package com.example.bankcards.util.converters;
 
-import com.example.bankcards.dto.MyRecords;
+import com.example.bankcards.dto.FullCardRecordDTO;
+import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.Card;
 
 public interface CardConverter {
 
-    MyRecords.fullCardRecordDTO convertToFullCardRecord(Card card);
+    FullCardRecordDTO convertToFullCardRecord(Card card);
 
-    MyRecords.simpleCardRecordDTO convertToSimpleCardRecord(Card card);
+    SimpleCardRecordDTO convertToSimpleCardRecord(Card card);
 }

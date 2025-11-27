@@ -822,7 +822,7 @@ components:
           example: 2
         amount:
           type: string
-          example: "100.50"
+          example: 100.50
       required:
         - fromCardId
         - toCardId

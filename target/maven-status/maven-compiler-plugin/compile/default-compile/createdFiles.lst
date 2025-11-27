@@ -3,7 +3,6 @@ com/example/bankcards/service/user/RegisterService.class
 com/example/bankcards/service/user/impls/LoginServiceImpl.class
 com/example/bankcards/exception/TokenException.class
 com/example/bankcards/service/user/impls/UserServiceImpl.class
-com/example/bankcards/dto/MyRecords$simpleCardRecordDTO.class
 com/example/bankcards/util/enums/RoleEnum.class
 com/example/bankcards/security/UserDetailsImpls.class
 com/example/bankcards/config/SecurityConfig.class
@@ -13,7 +12,6 @@ com/example/bankcards/service/card/impls/CardStatusServiceImpl.class
 com/example/bankcards/security/jwt/jwtimpls/JwtProviderImpl.class
 com/example/bankcards/service/card/CardService.class
 com/example/bankcards/exception/UserException.class
-com/example/bankcards/dto/MyRecords$fullCardRecordDTO.class
 com/example/bankcards/util/auxiliaryclasses/response/AuthResponse.class
 com/example/bankcards/service/card/CardDeletionService.class
 com/example/bankcards/dto/UserDTO.class
@@ -40,7 +38,7 @@ com/example/bankcards/controller/LoginController.class
 com/example/bankcards/entity/CardBlockRequest.class
 com/example/bankcards/service/user/impls/RegisterServiceImpl.class
 com/example/bankcards/service/card/CardBlockRequestService.class
-com/example/bankcards/dto/MyRecords.class
+com/example/bankcards/dto/FullCardRecordDTO.class
 com/example/bankcards/security/UserDetailsServiceImpl.class
 com/example/bankcards/entity/Role.class
 com/example/bankcards/repository/CardBlockRequestRepository.class
@@ -51,6 +49,7 @@ com/example/bankcards/controller/AdminUserController.class
 com/example/bankcards/util/converters/CardConverter.class
 com/example/bankcards/BankRestApiApplication.class
 com/example/bankcards/exception/TransferException.class
+com/example/bankcards/dto/SimpleCardRecordDTO.class
 com/example/bankcards/service/card/impls/CardCreationServiceImpl.class
 com/example/bankcards/service/transfer/impls/TransferServiceImpl.class
 com/example/bankcards/entity/Card.class

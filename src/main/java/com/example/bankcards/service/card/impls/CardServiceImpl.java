@@ -1,6 +1,7 @@
 package com.example.bankcards.service.card.impls;
 
-import com.example.bankcards.dto.MyRecords;
+import com.example.bankcards.dto.FullCardRecordDTO;
+import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.exception.CardException;
 import com.example.bankcards.exception.UserException;
@@ -19,32 +20,30 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final CardConverter cardConverter;
-    private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
     @Autowired
-    public CardServiceImpl(CardRepository cardRepository, CardConverter cardConverter, UserRepository userRepository, JwtProvider jwtProvider) {
+    public CardServiceImpl(CardRepository cardRepository, CardConverter cardConverter, JwtProvider jwtProvider) {
         this.cardRepository = cardRepository;
         this.cardConverter = cardConverter;
-        this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
     }
 
     @Override
-    public Page<MyRecords.simpleCardRecordDTO> getCards(Pageable pageable) {
+    public Page<SimpleCardRecordDTO> getCards(Pageable pageable) {
         return cardRepository.findAll(pageable)
                 .map(cardConverter::convertToSimpleCardRecord);
     }
 
     @Override
-    public Page<MyRecords.simpleCardRecordDTO> getUsersCards(Pageable pageable, String authHeader) {
+    public Page<SimpleCardRecordDTO> getUsersCards(Pageable pageable, String authHeader) {
         int userId = jwtProvider.extrackId(authHeader);
-        return cardRepository.findByUserId(userId,pageable)
+        return cardRepository.findByUserId(userId, pageable)
                 .map(cardConverter::convertToSimpleCardRecord);
     }
 
     @Override
-    public MyRecords.fullCardRecordDTO getCard(Integer cardId, String authHeader) {
+    public FullCardRecordDTO getCard(Integer cardId, String authHeader) {
         int userId = jwtProvider.extrackId(authHeader);
 
         Card usersCard = findCardById(cardId);

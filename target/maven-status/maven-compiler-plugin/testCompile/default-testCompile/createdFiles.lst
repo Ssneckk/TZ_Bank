@@ -1,0 +1,14 @@
+com/example/bankcards/service/user/impls/RegisterServiceImplTest.class
+com/example/bankcards/controller/AdminCardControllerTest.class
+com/example/bankcards/controller/CardControllerTest.class
+com/example/bankcards/service/user/impls/UserServiceImplTest.class
+com/example/bankcards/controller/LoginControllerTest.class
+com/example/bankcards/service/card/impls/CardStatusServiceImplTest.class
+com/example/bankcards/service/card/impls/CardBlockRequestServiceImplTest.class
+com/example/bankcards/service/card/impls/CardCreationServiceImplTest.class
+com/example/bankcards/service/user/impls/LoginServiceImplTest.class
+com/example/bankcards/service/card/impls/CardDeletionServiceimplTest.class
+com/example/bankcards/service/transfer/impls/TransferServiceImplTest.class
+com/example/bankcards/controller/AdminUserControllerTest.class
+com/example/bankcards/service/user/impls/BlockUserServiceImplTest.class
+com/example/bankcards/service/card/impls/CardServiceImplTest.class

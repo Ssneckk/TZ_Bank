@@ -1,8 +1,8 @@
 package com.example.bankcards.service.card;
 
-import com.example.bankcards.dto.MyRecords;
+import com.example.bankcards.dto.FullCardRecordDTO;
 
 public interface CardCreationService {
 
-    MyRecords.fullCardRecordDTO createCard(Integer id) throws Exception;
+    FullCardRecordDTO createCard(Integer id) throws Exception;
 }

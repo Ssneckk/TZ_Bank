@@ -5,8 +5,9 @@
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/controller/AdminUserController.java
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/controller/CardController.java
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/controller/LoginController.java
-/Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/dto/MyRecords.java
+/Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/dto/FullCardRecordDTO.java
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/dto/RoleDTO.java
+/Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/dto/SimpleCardRecordDTO.java
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/dto/UserDTO.java
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/entity/Card.java
 /Users/user/Desktop/ТЗ-СУБК/bank_rest/src/main/java/com/example/bankcards/entity/CardBlockRequest.java

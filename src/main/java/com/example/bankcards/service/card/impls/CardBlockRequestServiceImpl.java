@@ -56,6 +56,10 @@ public class CardBlockRequestServiceImpl implements CardBlockRequestService {
             throw new CardBlockRequestException("Уже есть активная заявка на блокировку этой карты");
         }
 
+        if(card.getStatus().equals(CardStatusEnum.BLOCKED) || card.getStatus() == CardStatusEnum.DELETED) {
+            throw new CardBlockRequestException("Карта заблокирована либо удалена");
+        }
+
         //Можно вынести это в отдельный метод используя Factory pattern,
         // но я решил сделать так
         CardBlockRequest cardBlockRequest = new CardBlockRequest();

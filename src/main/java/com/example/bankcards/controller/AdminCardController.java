@@ -1,6 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.MyRecords;
+import com.example.bankcards.dto.FullCardRecordDTO;
+import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.CardBlockRequest;
 import com.example.bankcards.service.card.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,13 @@ public class AdminCardController {
 
     @PostMapping("/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<MyRecords.fullCardRecordDTO> createCard(@PathVariable Integer userId) throws Exception{
+    public ResponseEntity<FullCardRecordDTO> createCard(@PathVariable Integer userId) throws Exception{
         return ResponseEntity.ok(cardCreationService.createCard(userId));
     }
 
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Page<MyRecords.simpleCardRecordDTO>> getCards(Pageable pageable) {
+    public ResponseEntity<Page<SimpleCardRecordDTO>> getCards(Pageable pageable) {
         return ResponseEntity.ok(cardService.getCards(pageable));
     }
 

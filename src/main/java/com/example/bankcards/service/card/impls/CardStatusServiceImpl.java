@@ -45,6 +45,12 @@ public class CardStatusServiceImpl implements CardStatusService {
 
         Card card = cardService.findCardById(card_id);
 
+        CardStatusEnum cardStatus = card.getStatus();
+
+        if (cardStatus == CardStatusEnum.BLOCKED || cardStatus == CardStatusEnum.DELETED) {
+            throw new CardException("Карта уже заблокирована либо удалена");
+        }
+
         card.setStatus(CardStatusEnum.BLOCKED);
 
         response.put("message of block: ", "Карта с id: " + card_id+" заблокирована");
@@ -58,6 +64,12 @@ public class CardStatusServiceImpl implements CardStatusService {
         Map<String, String> response = new HashMap<>();
 
         Card card = cardService.findCardById(card_id);
+
+        CardStatusEnum cardStatus = card.getStatus();
+
+        if (cardStatus == CardStatusEnum.DELETED) {
+            throw new CardException("Карта удалена");
+        }
 
         card.setStatus(CardStatusEnum.ACTIVE);
 

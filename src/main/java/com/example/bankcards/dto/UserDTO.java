@@ -16,6 +16,13 @@ public class UserDTO {
     public UserDTO() {
     }
 
+    public UserDTO(Integer id, String email, Boolean blocked, List<RoleDTO> roles) {
+        this.id = id;
+        this.email = email;
+        this.blocked = blocked;
+        this.roles = roles;
+    }
+
     public Integer getId() {
         return id;
     }

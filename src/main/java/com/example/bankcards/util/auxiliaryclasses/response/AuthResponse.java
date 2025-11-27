@@ -18,6 +18,9 @@ public class AuthResponse {
         this.token = token;
     }
 
+    public AuthResponse() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

@@ -32,19 +32,19 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     public Map<String, String> transferBetweenOwnCards(TransferRequest transferRequest, String token) {
         int userId = jwtProvider.extrackId(token);
-        Integer card1 = transferRequest.getFromCardId();
-        Integer card2 = transferRequest.getToCardId();
+        int cardFromId = transferRequest.getFromCardId();
+        int cardToId = transferRequest.getToCardId();
 
-        checkIsUserOwnerBoth(card1, card2, userId);
+        checkIsUserOwnerBoth(cardFromId, cardToId, userId);
 
-        Card cardFrom = cardRepository.findById(card1)
-                .orElseThrow(()->new CardException("Карта не найдена"));
+        Card cardFrom = cardRepository.findById(cardFromId)
+                .orElseThrow(()->new CardException("Карта FROM не найдена"));
         BigDecimal amount = transferRequest.getAmount();
 
         checkBalanceFromCard(cardFrom.getBalance(), amount);
 
-        Card cardTo = cardRepository.findById(card2)
-                .orElseThrow(()->new CardException("Карта не найдена"));
+        Card cardTo = cardRepository.findById(cardToId)
+                .orElseThrow(()->new CardException("Карта TO не найдена"));
 
         checkCardsStatus(cardFrom, cardTo);
 

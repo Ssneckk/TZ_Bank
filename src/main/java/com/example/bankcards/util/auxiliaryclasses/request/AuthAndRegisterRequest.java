@@ -14,6 +14,11 @@ public class AuthAndRegisterRequest {
     @Size(min = 8, message = "Пароль должен содержать минимум 8 символов")
     private String password;
 
+    public AuthAndRegisterRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public String getPassword() {
         return password;
     }

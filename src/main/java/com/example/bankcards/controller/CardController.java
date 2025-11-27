@@ -1,6 +1,7 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.MyRecords;
+import com.example.bankcards.dto.FullCardRecordDTO;
+import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.CardBlockRequest;
 import com.example.bankcards.service.card.CardBlockRequestService;
 import com.example.bankcards.service.card.CardService;
@@ -8,9 +9,9 @@ import com.example.bankcards.service.transfer.TransferService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,15 +34,15 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MyRecords.simpleCardRecordDTO>> getUsersCards(Pageable pageable,
-                                                                             @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<Page<SimpleCardRecordDTO>> getUsersCards(@PageableDefault(size = 10) Pageable pageable,
+                                                                   @RequestHeader("Authorization") String authHeader) {
         return ResponseEntity.ok(cardService.getUsersCards(pageable, authHeader));
     }
 
     @GetMapping("/{cardId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<MyRecords.fullCardRecordDTO> getCard(@PathVariable Integer cardId,
-                                           @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<FullCardRecordDTO> getCard(@PathVariable Integer cardId,
+                                                     @RequestHeader("Authorization") String authHeader) {
         return ResponseEntity.ok(cardService.getCard(cardId, authHeader));
     }
 
