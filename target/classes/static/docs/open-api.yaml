@@ -2,7 +2,6 @@ openapi: 3.0.3
 info:
   title: Система Управления Банковскими Картами
   version: 0.0.1
-  description: позже
 servers:
   - url: http://localhost:8080/api/
     description: Dev server
@@ -821,7 +820,8 @@ components:
           type: integer
           example: 2
         amount:
-          type: string
+          type: number
+          format: double
           example: 100.50
       required:
         - fromCardId
