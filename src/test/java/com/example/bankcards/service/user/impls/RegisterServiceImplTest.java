@@ -1,25 +1,19 @@
 package com.example.bankcards.service.user.impls;
 
-import com.example.bankcards.dto.RoleDTO;
 import com.example.bankcards.dto.UserDTO;
-import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.UserException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.user.RegisterService;
 import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterRequest;
 import com.example.bankcards.util.converters.UserConverter;
-import com.example.bankcards.util.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

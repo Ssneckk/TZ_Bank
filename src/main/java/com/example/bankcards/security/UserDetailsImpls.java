@@ -6,6 +6,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * Реализация интерфейса {@link UserDetails} для интеграции сущности {@link User}
+ * с Spring Security.
+ *
+ * Используется для предоставления информации о пользователе в процессе аутентификации
+ * и авторизации через Spring Security.
+ */
 public class UserDetailsImpls implements UserDetails {
 
     private User user;
@@ -27,6 +34,10 @@ public class UserDetailsImpls implements UserDetails {
         return user.getPassword();
     }
 
+    /**
+     * Возвращает имя пользователя для аутентификации (email).
+     * @return email пользователя
+     */
     @Override
     public String getUsername() {
         return user.getEmail();

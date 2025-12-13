@@ -2,19 +2,17 @@ package com.example.bankcards.service.user.impls;
 
 import com.example.bankcards.dto.UserDTO;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.TokenException;
-import com.example.bankcards.exception.UserException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.UserDetailsImpls;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.converters.UserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,8 +36,8 @@ public class UserServiceImpl implements UserService {
 
     //N+1 проблема здесь (Решено)
     @Override
-    public List<UserDTO> getUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(userConverter::convertToDTO).toList();
+    public Page<UserDTO> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userConverter::convertToDTO);
     }
 
     @Override

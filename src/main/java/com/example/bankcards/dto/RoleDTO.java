@@ -2,6 +2,10 @@ package com.example.bankcards.dto;
 
 import com.example.bankcards.util.enums.RoleEnum;
 
+/**
+ * DTO, содержащий роль пользователя.
+ * <p>Поле: {@link RoleEnum } роль пользователя админ/пользователь.</p>
+ */
 public class RoleDTO {
 
     private RoleEnum role_name;

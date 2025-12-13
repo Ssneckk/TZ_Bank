@@ -1,6 +1,7 @@
 package com.example.bankcards.entity;
 
 
+import com.example.bankcards.util.enums.CardStatusEnum;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -8,12 +9,24 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Сущность, представляющая пользователя банка.
+ * Поля:
+ * <ul>
+ *     <li>{@code id} - идентификатор пользователя;</li>
+ *     <li>{@code email} - почта пользователя;</li>
+ *     <li>{@code password} - пароль пользователя;</li>
+ *     <li>{@code blocked} - Статус аккаунта пользователя заблокирован/активен;</li>
+ *     <li>{@code roles} - {@link List} список {@link Role} ролей пользователя;</li>
+ *     <li>{@code cards} - {@link List} список {@link Card} карт пользователя;</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "users")
-
 public class User {
 
     @Id

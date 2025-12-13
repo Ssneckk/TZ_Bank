@@ -1,12 +1,24 @@
 package com.example.bankcards.entity;
 
+import com.example.bankcards.util.enums.CardStatusEnum;
 import com.example.bankcards.util.enums.RoleEnum;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * Сущность, представляющая роль пользователя.
+ *
+ * Поля:
+ * <ul>
+ *     <li>{@code id} - идентификатор роли;</li>
+ *     <li>{@code role_name} - {@link RoleEnum} роль, например: Админ</li>
+ *     <li>{@code user} - {@link User} Владелец роли;</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "roles")
 public class Role implements GrantedAuthority {

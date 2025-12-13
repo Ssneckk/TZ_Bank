@@ -7,6 +7,7 @@ import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+/**
+ * REST - контроллер с административными операциями управления пользователями.
+ * <p>Предоставляет функции для:</p>
+ * <ul>
+ *      <li>Регистрации пользователей;</li>
+ *      <li>Получения всех пользователей;</li>
+ *      <li>Получения информации аккаунта пользователя;</li>
+ *      <li>Блокировки пользователя;</li>
+ * </ul>
+ */
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -30,28 +42,50 @@ public class AdminUserController {
         this.blockUserService = blockUserService;
     }
 
+    /**
+     * Регистрирует пользователя по данным формы.
+     *
+     * @param authAndRegisterRequest форма с логином и паролем
+     * @return {@link UserDTO} DTO зарегистрированного пользователя
+     */
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody AuthAndRegisterRequest authAndRegisterRequest) {
         return ResponseEntity.ok(registerService.registr(authAndRegisterRequest));
     }
 
+    /**
+     * Получение списка пользователей с пагинацией и сортировкой
+     * @param pageable - параметры пагинации и сортировки
+     * @return страница со списков {@link UserDTO} DTO пользователей
+     */
+    @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Page<UserDTO>> getUsers(Pageable pageable) {
+        return ResponseEntity.ok(userService.getUsers(pageable));
+    }
+
+    /**
+     * Получение подробной информации о пользователе по идентификатору
+     * @param userId - идентификатор пользователя
+     * @return {@link UserDTO} DTO пользователя
+     */
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getAccountInfo(@PathVariable Integer userId) {
         return ResponseEntity.ok(userService.getInfo(userId));
     }
 
+    /**
+     * Блокирует или разблокирует пользователя по идентификатору.
+     *
+     * @param userId идентификатор пользователя
+     * @param blockOrNot true для блокировки, false для разблокировки
+     * @return {@link Map} сообщение с результатом блокировки/разблокировки пользователя
+     */
     @PatchMapping("/{userId}/block")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String,String>> block(@PathVariable Integer userId, @RequestParam Boolean blockOrNot) {
         return ResponseEntity.ok(blockUserService.block(userId, blockOrNot));
     }
-
-    @GetMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UserDTO>> getUsers(Pageable pageable) {
-        return ResponseEntity.ok(userService.getUsers(pageable));
-    }
-
 }

@@ -3,6 +3,16 @@ package com.example.bankcards.dto;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * DTO, содержащий пользователя.
+ * Поля:
+ * <ul>
+ *     <li>{@code id} - идентификатор пользователя;</li>
+ *     <li>{@code email} - почта пользователя;</li>
+ *     <li>{@code blocked} - статус аккаунта (например: заблокирован, активный);</li>
+ *     <li>{@code roles} - {@link List} список с {@link RoleDTO} DTO ролями пользователя.</li>
+ * </ul>
+ */
 public class UserDTO {
 
     private Integer id;

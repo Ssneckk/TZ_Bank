@@ -1,10 +1,9 @@
 package com.example.bankcards.service.transfer.impls;
 
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.exception.CardException;
-import com.example.bankcards.exception.TransferException;
+import com.example.bankcards.exception.exceptions.CardException;
+import com.example.bankcards.exception.exceptions.TransferException;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.transfer.TransferService;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;

@@ -3,7 +3,7 @@ package com.example.bankcards.service.card.impls;
 import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.TokenException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.card.CardCreationService;
@@ -50,10 +50,10 @@ public class CardCreationServiceImpl implements CardCreationService {
 
     @Override
     @Transactional
-    public FullCardRecordDTO createCard(Integer user_id) throws Exception{
+    public FullCardRecordDTO createCard(Integer user_id){
 
         User user = userRepository.findById(user_id)
-                .orElseThrow(()-> new TokenException("User с id из токена: "
+                .orElseThrow(()-> new UserException("User с id из токена: "
                         + user_id + " не найден"));
 
         String cardNumber = generateCardNumber();

@@ -9,6 +9,20 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * Сущность, представляющая банковскую карту пользователя.
+ *
+ * Поля:
+ * <ul>
+ *     <li>{@code id} - идентификатор карты;</li>
+ *     <li>{@code card_number_encrypted} - зашифрованный 16-значный номер карты;</li>
+ *     <li>{@code card_number_last4} - последние 4 цифры карты;</li>
+ *     <li>{@code user} - {@link User} Владелец карты;</li>
+ *     <li>{@code expireDate} - дата (годна до) в формате {@link LocalDate};</li>
+ *     <li>{@code status} - {@link CardStatusEnum} статус карты (например: заблокирована, активна, удалена);</li>
+ *     <li>{@code balance} - баланс карты (например: 0.00).</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "cards")
 public class Card {

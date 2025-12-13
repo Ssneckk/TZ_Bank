@@ -1,7 +1,7 @@
 package com.example.bankcards.service.card.impls;
 
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.exception.CardException;
+import com.example.bankcards.exception.exceptions.CardException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.service.card.CardStatusService;

@@ -1,9 +1,8 @@
 package com.example.bankcards.service.transfer.impls;
 
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.exception.TransferException;
+import com.example.bankcards.exception.exceptions.TransferException;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.transfer.TransferService;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

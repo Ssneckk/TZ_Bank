@@ -1,7 +1,7 @@
 package com.example.bankcards.service.user.impls;
 
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.UserException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.user.BlockUserService;
 import org.springframework.stereotype.Service;

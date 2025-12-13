@@ -1,5 +1,7 @@
 package com.example.bankcards.exception;
 
+import com.example.bankcards.exception.exceptions.*;
+import com.example.bankcards.exception.exceptions.SecurityException;
 import com.example.bankcards.util.auxiliaryclasses.response.ErrorResponse;
 import com.example.bankcards.util.auxiliaryclasses.response.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,25 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Глобальный обработчик исключений для REST-контроллеров приложения.
+ * <p>Перехватывает различные исключения и возвращает корректные HTTP-статусы
+ * вместе с подробными сообщениями об ошибках в формате JSON.</p>
+ *
+ * Поддерживаемые исключения:
+ * <ul>
+ *     <li>{@link UsernameNotFoundException} - 404 NOT FOUND с сообщением ошибки</li>
+ *     <li>{@link TokenException} - 401 UNAUTHORIZED с сообщением ошибки</li>
+ *     <li>{@link UserException} - 400 BAD REQUEST с сообщением ошибки</li>
+ *     <li>{@link CardException} - 400 BAD REQUEST с сообщением ошибки</li>
+ *     <li>{@link CardBlockRequestException} - 400 BAD REQUEST с сообщением ошибки</li>
+ *     <li>{@link TransferException} - 400 BAD REQUEST с сообщением ошибки</li>
+ *     <li>{@link CryptoUtilException} - 400 BAD REQUEST с сообщением ошибки</li>
+ *     <li>{@link LockedException} - 401 UNAUTHORIZED с сообщением ошибки</li>
+ *     <li>{@link SecurityException} - 401 UNAUTHORIZED с сообщением ошибки</li>
+ *     <li>{@link MethodArgumentNotValidException} - 400 BAD REQUEST с деталями ошибок валидации</li>
+ * </ul>
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -70,6 +91,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TransferException.class)
     public ResponseEntity<ErrorResponse> handleCardBlockRequestException(TransferException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(400, e.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(CryptoUtilException.class)
+    public ResponseEntity<ErrorResponse> handleCryptoUtilException(CryptoUtilException e) {
         return new ResponseEntity<>(
                 new ErrorResponse(400, e.getMessage()),
                 HttpStatus.BAD_REQUEST

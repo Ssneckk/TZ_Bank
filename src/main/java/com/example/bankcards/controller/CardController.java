@@ -18,6 +18,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * REST-контроллер доступный для аутентифицированных пользователей
+ * <p>Предоставляет возможности для:</p>
+ * <ul>
+ *     <li>Получения своих карт;</li>
+ *     <li>Получения полной информации своей карты;</li>
+ *     <li>Запросить блокировку карты;</li>
+ *     <li>Сделать перевод между своими счетами.</li>
+ * </ul>
+ */
 @RestController
 @RequestMapping("/api/cards")
 public class CardController {
@@ -33,24 +43,45 @@ public class CardController {
         this.cardBlockRequestService = cardBlockRequestService;
     }
 
+    /**
+     * Возвращает страницу карт текущего пользователя с возможностью пагинации и сортировки
+     * @param pageable - параметры пагинации и сортировки
+     * @return страница {@link SimpleCardRecordDTO} DTO с краткой информацией карты
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<Page<SimpleCardRecordDTO>> getUsersCards(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(cardService.getUsersCards(pageable));
     }
 
+    /**
+     * Возвращает полную информацию о карте текущего пользователя по идентификатору
+     * @param cardId - идентификатор карты
+     * @return {@link FullCardRecordDTO} DTO с полной информацией о карте
+     */
     @GetMapping("/{cardId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<FullCardRecordDTO> getCard(@PathVariable Integer cardId) {
         return ResponseEntity.ok(cardService.getCard(cardId));
     }
 
+    /**
+     * Отправляет запрос на блокировку карты текущего пользователя по идентификатору
+     * @param cardId - идентификатор карты
+     * @return {@link CardBlockRequest} запрос на блокировку
+     */
     @PostMapping("/{cardId}/block-request")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<CardBlockRequest> makeCardBlockRequest(@PathVariable Integer cardId) {
         return ResponseEntity.ok(cardBlockRequestService.makeRequest(cardId));
     }
 
+    /**
+     * Выполняет перевод между картами пользователя, выполняющего запрос,
+     * на основе данных формы
+     * @param transferRequest - форма перевода (откуда, куда и сумма)
+     * @return {@link Map} с сообщением о результате транзакции
+     */
     @PostMapping("/transfer")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<Map<String, String>> transfer(@RequestBody @Valid TransferRequest transferRequest) {

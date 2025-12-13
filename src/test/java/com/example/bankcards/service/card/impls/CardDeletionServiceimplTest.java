@@ -1,13 +1,8 @@
 package com.example.bankcards.service.card.impls;
 
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.entity.CardBlockRequest;
-import com.example.bankcards.exception.CardException;
-import com.example.bankcards.repository.CardBlockRequestRepository;
+import com.example.bankcards.exception.exceptions.CardException;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.security.jwt.JwtProvider;
-import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.util.enums.CardStatusEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

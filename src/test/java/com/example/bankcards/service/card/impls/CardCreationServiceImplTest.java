@@ -3,14 +3,13 @@ package com.example.bankcards.service.card.impls;
 import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.TokenException;
+import com.example.bankcards.exception.exceptions.TokenException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.auxiliaryclasses.crypto.CryptoUtil;
 import com.example.bankcards.util.converters.CardConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

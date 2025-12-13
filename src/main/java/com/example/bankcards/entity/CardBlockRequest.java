@@ -1,9 +1,23 @@
 package com.example.bankcards.entity;
 
+import com.example.bankcards.dto.RoleDTO;
+import com.example.bankcards.util.enums.CardStatusEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
+/**
+ * Сущность, представляющая запрос на блокировку карты пользователя.
+ *
+ * Поля:
+ * <ul>
+ *     <li>{@code id} - идентификатор запроса;</li>
+ *     <li>{@code cardId} - идентификатор карты для блокировки;</li>
+ *     <li>{@code requestedUserId} - идентификатор пользователя, запросившего блокировку карты;</li>
+ *     <li>{@code requestedAt} - дата запроса {@link LocalDate};</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "card_block_requests")
 public class CardBlockRequest {

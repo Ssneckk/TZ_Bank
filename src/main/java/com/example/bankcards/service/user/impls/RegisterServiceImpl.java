@@ -3,7 +3,7 @@ package com.example.bankcards.service.user.impls;
 import com.example.bankcards.dto.UserDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.UserException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterRequest;
 import com.example.bankcards.util.converters.UserConverter;

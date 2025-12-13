@@ -4,5 +4,5 @@ import com.example.bankcards.dto.FullCardRecordDTO;
 
 public interface CardCreationService {
 
-    FullCardRecordDTO createCard(Integer id) throws Exception;
+    FullCardRecordDTO createCard(Integer id);
 }

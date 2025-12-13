@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Публичный REST-контроллер для:
+ * аутентификации пользователей
+ */
 @RestController
 @RequestMapping("/api")
 public class LoginController {
@@ -22,6 +26,11 @@ public class LoginController {
         this.loginService = loginService;
     }
 
+    /**
+     * Аутентификация пользователя по форме
+     * @param authAndRegisterRequest - форма логин и пароль
+     * @return {@link AuthResponse} объект, содержащий JWT-токен для авторизации
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthAndRegisterRequest authAndRegisterRequest) {
         return ResponseEntity.ok(loginService.authenticate(authAndRegisterRequest));

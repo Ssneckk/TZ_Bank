@@ -3,23 +3,15 @@ package com.example.bankcards.service.card.impls;
 import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.exception.CardException;
-import com.example.bankcards.exception.UserException;
+import com.example.bankcards.exception.exceptions.CardException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.security.UserDetailsImpls;
-import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.converters.CardConverter;
-import org.apache.catalina.Context;
-import org.apache.catalina.core.ApplicationContext;
-import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service

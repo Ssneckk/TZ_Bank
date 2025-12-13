@@ -1,7 +1,7 @@
 package com.example.bankcards.security.jwt.jwtimpls;
 
 import com.example.bankcards.config.JwtProperties;
-import com.example.bankcards.exception.TokenException;
+import com.example.bankcards.exception.exceptions.TokenException;
 import com.example.bankcards.security.UserDetailsImpls;
 import com.example.bankcards.security.jwt.JwtProvider;
 import io.jsonwebtoken.*;
@@ -13,6 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Реализация интерфейса {@link JwtProvider} для генерации и парсинга JWT токенов.
+ * <p>Использует {@link JwtProperties} для получения секретного ключа и времени жизни токена.</p>
+ */
 @Component
 public class JwtProviderImpl implements JwtProvider {
 
@@ -22,6 +26,12 @@ public class JwtProviderImpl implements JwtProvider {
         this.jwtProperties = jwtProperties;
     }
 
+    /**
+     * Генерирует JWT токен для пользователя с префиксом "Bearer ".
+     *
+     * @param userDetailsImpls объект {@link UserDetailsImpls}, для которого создается токен
+     * @return строка JWT токена с префиксом "Bearer "
+     */
     @Override
     public String generateToken(UserDetailsImpls userDetailsImpls) {
 
@@ -38,6 +48,14 @@ public class JwtProviderImpl implements JwtProvider {
                 .compact();
     }
 
+    /**
+     * Извлекает Claims (payload) из JWT токена.
+     * <p>Если токен недействителен или просрочен, выбрасывает {@link TokenException} с описанием причины.</p>
+     *
+     * @param authHeader строка заголовка авторизации, содержащая токен с префиксом "Bearer "
+     * @return объект {@link Claims} содержащий данные токена
+     * @throws TokenException если токен просрочен, поврежден, пустой или имеет неверную подпись
+     */
     @Override
     public Claims extractClaims(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
@@ -68,29 +86,16 @@ public class JwtProviderImpl implements JwtProvider {
         }
     }
 
+    /**
+     * Извлекает username (обычно email) пользователя из токена.
+     *
+     * @param token JWT токен с префиксом "Bearer "
+     * @return username пользователя
+     * @throws TokenException если токен недействителен
+     */
     @Override
     public String extractUsername(String token) {
         return extractClaims(token).getSubject();
-    }
-
-    @Override
-    public Integer extrackId(String token) {
-        return extractClaims(token).get("id", Integer.class);
-    }
-
-    @Override
-    public List<SimpleGrantedAuthority> extractAuthorities(String token) {
-
-        List<String> roles = extractClaims(token).get("authorities", List.class);
-
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Date extractExpiration(String token) {
-        return extractClaims(token).getExpiration();
     }
 
 }

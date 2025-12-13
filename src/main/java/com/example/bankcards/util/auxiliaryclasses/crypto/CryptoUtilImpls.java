@@ -1,5 +1,6 @@
 package com.example.bankcards.util.auxiliaryclasses.crypto;
 
+import com.example.bankcards.exception.exceptions.CryptoUtilException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,18 +19,29 @@ public class CryptoUtilImpls implements CryptoUtil {
     }
 
     @Override
-    public String encrypt(String card_number) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encrypted = cipher.doFinal(card_number.getBytes());
-        return Base64.getEncoder().encodeToString(encrypted);
+    public String encrypt(String card_number)  {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encrypted = cipher.doFinal(card_number.getBytes());
+            return Base64.getEncoder().encodeToString(encrypted);
+        }
+        catch (Exception e) {
+            throw new CryptoUtilException("Произошла ошибка при кодировки номера карты!");
+        }
+
     }
 
     @Override
-    public String decrypt(String encrypted_card_number) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encrypted_card_number));
-        return new String(decrypted);
+    public String decrypt(String encrypted_card_number){
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encrypted_card_number));
+            return new String(decrypted);
+        }
+        catch (Exception e) {
+            throw new CryptoUtilException("Произошла ошибка при раскодировки номера карты!");
+        }
     }
 }

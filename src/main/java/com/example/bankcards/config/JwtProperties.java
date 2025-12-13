@@ -9,7 +9,11 @@ import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-
+/**
+ * Хранит свойства JWT: секретный ключ и время жизни токена.
+ * Значения подгружаются из application.properties или application.yml
+ * с префиксом "jwt".
+ */
 @Component
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
