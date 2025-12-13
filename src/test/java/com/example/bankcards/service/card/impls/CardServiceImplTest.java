@@ -6,6 +6,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.card.CardService;
+import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.converters.CardConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class CardServiceImplTest {
 
     private CardRepository cardRepository;
     private CardConverter cardConverter;
-    private JwtProvider jwtProvider;
+    private UserService userService;
 
     private CardService cardService;
 
@@ -35,8 +36,8 @@ class CardServiceImplTest {
     void setUp() {
         cardRepository = Mockito.mock(CardRepository.class);
         cardConverter = Mockito.mock(CardConverter.class);
-        jwtProvider = Mockito.mock(JwtProvider.class);
-        cardService = new CardServiceImpl(cardRepository, cardConverter, jwtProvider);
+        userService = Mockito.mock(UserService.class);
+        cardService = new CardServiceImpl(cardRepository, cardConverter,userService);
     }
 
     @Test
@@ -57,20 +58,19 @@ class CardServiceImplTest {
 
     @Test
     void getUsersCards_shouldReturnMappedPage() {
-        String authHeader = "auth";
         int userId = 1;
         Pageable pageable = PageRequest.of(0, 10);
         Card card = new Card();
         Page<Card> cardPage = new PageImpl<>(List.of(card));
 
-        when(jwtProvider.extrackId(authHeader)).thenReturn(userId);
+        when(userService.getCurrentUserId()).thenReturn(userId);
         when(cardRepository.findByUserId(userId, pageable)).thenReturn(cardPage);
         when(cardConverter.convertToSimpleCardRecord(card)).thenReturn(new SimpleCardRecordDTO(1, "test", "test"));
 
-        Page<SimpleCardRecordDTO> result = cardService.getUsersCards(pageable, authHeader);
+        Page<SimpleCardRecordDTO> result = cardService.getUsersCards(pageable);
 
         assertEquals(1, result.getContent().size());
-        verify(jwtProvider).extrackId(authHeader);
+        verify(userService).getCurrentUserId();
         verify(cardRepository).findByUserId(userId, pageable);
         verify(cardConverter).convertToSimpleCardRecord(card);
     }
@@ -83,15 +83,15 @@ class CardServiceImplTest {
         Card card = new Card();
         FullCardRecordDTO dto = new FullCardRecordDTO(1,"test","test","test", BigDecimal.ZERO);
 
-        when(jwtProvider.extrackId(authHeader)).thenReturn(userId);
+        when(userService.getCurrentUserId()).thenReturn(userId);
         when(cardRepository.existsByIdAndUserId(cardId, userId)).thenReturn(true);
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
         when(cardConverter.convertToFullCardRecord(card)).thenReturn(dto);
 
-        FullCardRecordDTO result = cardService.getCard(cardId, authHeader);
+        FullCardRecordDTO result = cardService.getCard(cardId);
 
         assertEquals(dto, result);
-        verify(jwtProvider).extrackId(authHeader);
+        verify(userService).getCurrentUserId();
         verify(cardRepository).existsByIdAndUserId(cardId, userId);
         verify(cardConverter).convertToFullCardRecord(card);
     }

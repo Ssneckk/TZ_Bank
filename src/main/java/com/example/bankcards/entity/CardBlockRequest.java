@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "card_block_request")
+@Table(name = "card_block_requests")
 public class CardBlockRequest {
 
     @Id
@@ -24,6 +24,11 @@ public class CardBlockRequest {
     public CardBlockRequest() {
     }
 
+    public CardBlockRequest(int cardId, int requestedUserId, LocalDate requestedAt) {
+        this.cardId = cardId;
+        this.requestedUserId = requestedUserId;
+        this.requestedAt = requestedAt;
+    }
     public int getId() {
         return id;
     }

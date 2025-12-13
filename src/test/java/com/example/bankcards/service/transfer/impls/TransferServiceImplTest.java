@@ -5,6 +5,7 @@ import com.example.bankcards.exception.TransferException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.transfer.TransferService;
+import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;
 import com.example.bankcards.util.enums.CardStatusEnum;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,20 +23,19 @@ import static org.mockito.Mockito.when;
 
 class TransferServiceImplTest {
 
-    private JwtProvider jwtProvider;
     private CardRepository cardRepository;
     private TransferService transferService;
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
-        jwtProvider = Mockito.mock(JwtProvider.class);
+        userService = Mockito.mock(UserService.class);
         cardRepository = Mockito.mock(CardRepository.class);
-        transferService = new TransferServiceImpl(jwtProvider, cardRepository);
+        transferService = new TransferServiceImpl(cardRepository, userService);
     }
 
     @Test
     void transferBetweenOwnCards_shouldReturnSuccess() {
-        String token = "token";
         int userId = 2;
         int cardFromId = 1;
         int cardToId = 3;
@@ -50,7 +50,7 @@ class TransferServiceImplTest {
         cardTo.setStatus(CardStatusEnum.ACTIVE);
         cardTo.setBalance(BigDecimal.valueOf(2000.00));
 
-        when(jwtProvider.extrackId(token)).thenReturn(userId);
+        when(userService.getCurrentUserId()).thenReturn(userId);
 
         when(cardRepository.existsByIdAndUserId(cardFromId, userId)).thenReturn(true);
         when(cardRepository.existsByIdAndUserId(cardToId, userId)).thenReturn(true);
@@ -60,10 +60,10 @@ class TransferServiceImplTest {
 
         String successMessage = "Транзакция успешно завершена";
 
-        Map<String, String> message = transferService.transferBetweenOwnCards(transferRequest, token);
+        Map<String, String> message = transferService.transferBetweenOwnCards(transferRequest);
 
         assertEquals(successMessage, message.get("message"));
-        verify(jwtProvider).extrackId(token);
+        verify(userService).getCurrentUserId();
         verify(cardRepository).existsByIdAndUserId(cardFromId, userId);
         verify(cardRepository).existsByIdAndUserId(cardToId, userId);
         verify(cardRepository).findById(cardFromId);
@@ -72,20 +72,19 @@ class TransferServiceImplTest {
 
     @Test
     void transferBetweenOwnCards_shouldCheckOwnerException() {
-        String token = "token";
         int userId = 2;
         int cardFromId = 1;
         int cardToId = 3;
         BigDecimal amount = new BigDecimal("100.00");
         TransferRequest transferRequest = new TransferRequest(cardFromId,cardToId, amount);
 
-        when(jwtProvider.extrackId(token)).thenReturn(userId);
+        when(userService.getCurrentUserId()).thenReturn(userId);
 
         when(cardRepository.existsByIdAndUserId(cardFromId, userId)).thenReturn(true);
         when(cardRepository.existsByIdAndUserId(cardToId, userId)).thenReturn(false);
 
-        assertThrows(TransferException.class , () -> transferService.transferBetweenOwnCards(transferRequest, token));
-        verify(jwtProvider).extrackId(token);
+        assertThrows(TransferException.class , () -> transferService.transferBetweenOwnCards(transferRequest));
+        verify(userService).getCurrentUserId();
         verify(cardRepository).existsByIdAndUserId(cardFromId, userId);
         verify(cardRepository).existsByIdAndUserId(cardToId, userId);
     }

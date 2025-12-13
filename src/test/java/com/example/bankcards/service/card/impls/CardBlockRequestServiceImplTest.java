@@ -9,6 +9,7 @@ import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.card.CardBlockRequestService;
 import com.example.bankcards.service.card.CardService;
+import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.enums.CardStatusEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,49 +31,40 @@ import static org.mockito.Mockito.verify;
 class CardBlockRequestServiceImplTest {
 
     private CardBlockRequestRepository cardBlockRequestRepository;
-    private UserRepository userRepository;
     private CardService cardService;
-    private JwtProvider jwtProvider;
-    private CardRepository cardRepository;
+    private UserService userService;
 
     private CardBlockRequestService cardBlockRequestService;
 
     @BeforeEach
     void setUp() {
         cardBlockRequestRepository = Mockito.mock(CardBlockRequestRepository.class);
-        userRepository = Mockito.mock(UserRepository.class);
         cardService = Mockito.mock(CardService.class);
-        jwtProvider = Mockito.mock(JwtProvider.class);
-        cardRepository = Mockito.mock(CardRepository.class);
+        userService = Mockito.mock(UserService.class);
 
         cardBlockRequestService = new CardBlockRequestServiceImpl(
                 cardBlockRequestRepository,
-                userRepository,
                 cardService,
-                jwtProvider);
+                userService);
     }
 
     @Test
     void makeRequest_shouldCallDependencies() {
-        String authHeader = "authHeader";
         int cardId = 2;
-        int userId = 1;
 
         User user = new User();
         Card card = new Card();
         user.setCards(new ArrayList<>());
         user.getCards().add(card);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(jwtProvider.extrackId(authHeader)).thenReturn(userId);
+        when(userService.findCurrentUser()).thenReturn(user);
         when(cardService.findCardById(cardId)).thenReturn(card);
 
         when(cardBlockRequestRepository.findByCardId(cardId)).thenReturn(Optional.empty());
 
-        cardBlockRequestService.makeRequest(cardId, authHeader);
+        cardBlockRequestService.makeRequest(cardId);
 
-        verify(jwtProvider).extrackId(authHeader);
-        verify(userRepository).findById(userId);
+        verify(userService).findCurrentUser();
         verify(cardService).findCardById(cardId);
         verify(cardBlockRequestRepository).findByCardId(cardId);
     }

@@ -34,30 +34,27 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<SimpleCardRecordDTO>> getUsersCards(@PageableDefault(size = 10) Pageable pageable,
-                                                                   @RequestHeader("Authorization") String authHeader) {
-        return ResponseEntity.ok(cardService.getUsersCards(pageable, authHeader));
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    public ResponseEntity<Page<SimpleCardRecordDTO>> getUsersCards(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(cardService.getUsersCards(pageable));
     }
 
     @GetMapping("/{cardId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<FullCardRecordDTO> getCard(@PathVariable Integer cardId,
-                                                     @RequestHeader("Authorization") String authHeader) {
-        return ResponseEntity.ok(cardService.getCard(cardId, authHeader));
+    public ResponseEntity<FullCardRecordDTO> getCard(@PathVariable Integer cardId) {
+        return ResponseEntity.ok(cardService.getCard(cardId));
     }
 
     @PostMapping("/{cardId}/block-request")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<CardBlockRequest> makeCardBlockRequest(@PathVariable Integer cardId,
-                                                                 @RequestHeader("Authorization") String authHeader) {
-        return ResponseEntity.ok(cardBlockRequestService.makeRequest(cardId, authHeader));
+    public ResponseEntity<CardBlockRequest> makeCardBlockRequest(@PathVariable Integer cardId) {
+        return ResponseEntity.ok(cardBlockRequestService.makeRequest(cardId));
     }
 
     @PostMapping("/transfer")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    public ResponseEntity<Map<String, String>> transfer(@RequestBody @Valid TransferRequest transferRequest,
-                                                        @RequestHeader("Authorization") String authHeader) {
-        return ResponseEntity.ok(transferService.transferBetweenOwnCards(transferRequest,authHeader));
+    public ResponseEntity<Map<String, String>> transfer(@RequestBody @Valid TransferRequest transferRequest) {
+        return ResponseEntity.ok(transferService.transferBetweenOwnCards(transferRequest));
     }
 
 

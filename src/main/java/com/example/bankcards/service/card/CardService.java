@@ -10,9 +10,9 @@ public interface CardService {
 
     Page<SimpleCardRecordDTO> getCards(Pageable pageable);
 
-    Page<SimpleCardRecordDTO> getUsersCards(Pageable pageable, String authHeader);
+    Page<SimpleCardRecordDTO> getUsersCards(Pageable pageable);
 
-    FullCardRecordDTO getCard(Integer cardId, String authHeader);
+    FullCardRecordDTO getCard(Integer cardId);
 
     Card findCardById(Integer cardId);
 }

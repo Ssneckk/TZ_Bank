@@ -6,6 +6,7 @@ import com.example.bankcards.exception.TransferException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.transfer.TransferService;
+import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;
 import com.example.bankcards.util.enums.CardStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +20,19 @@ import java.util.Map;
 @Service
 public class TransferServiceImpl implements TransferService {
 
-    private final JwtProvider jwtProvider;
     private final CardRepository cardRepository;
+    private final UserService userService;
 
     @Autowired
-    public TransferServiceImpl(JwtProvider jwtProvider, CardRepository cardRepository) {
-        this.jwtProvider = jwtProvider;
+    public TransferServiceImpl(CardRepository cardRepository, UserService userService) {
         this.cardRepository = cardRepository;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
-    public Map<String, String> transferBetweenOwnCards(TransferRequest transferRequest, String token) {
-        int userId = jwtProvider.extrackId(token);
+    public Map<String, String> transferBetweenOwnCards(TransferRequest transferRequest) {
+        int userId = userService.getCurrentUserId();
         int cardFromId = transferRequest.getFromCardId();
         int cardToId = transferRequest.getToCardId();
 

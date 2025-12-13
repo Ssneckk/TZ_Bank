@@ -1,11 +1,11 @@
 databaseChangeLog:
 
   - changeSet:
-      id: insert-user
+      id: 001-insert-user
       author: Ssneckk
       changes:
         - sql: >
-            INSERT INTO "user"(id, email, password, blocked)
+            INSERT INTO users(id, email, password, blocked)
             VALUES
               (221, 'Admin@mail.ru',
                '$2a$12$FVQCZTMfKqjJmgSFIqjM.uuCcuYUAFgPaytP8OVsywXAKptyhsRjS', false),
@@ -19,7 +19,7 @@ databaseChangeLog:
       author: Ssneckk
       changes:
         - sql: >
-            INSERT INTO role(role_name, user_id)
+            INSERT INTO roles(role_name, user_id)
             VALUES
               ('ROLE_ADMIN', 221),
               ('ROLE_USER', 222);

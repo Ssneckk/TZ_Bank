@@ -3,6 +3,7 @@ package com.example.bankcards.service.user.impls;
 import com.example.bankcards.dto.UserDTO;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.TokenException;
+import com.example.bankcards.exception.UserException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.converters.UserConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,8 +53,8 @@ class UserServiceImplTest {
         int userId = 2;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        TokenException exception = assertThrows(TokenException.class, () -> userService.getInfo(userId));
-        assertEquals("User с id из токена: 2 не найден", exception.getMessage());
+        UserException exception = assertThrows(UserException.class, () -> userService.getInfo(userId));
+        assertEquals("User с id: 2 не найден", exception.getMessage());
     }
 
     @Test

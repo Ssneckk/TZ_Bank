@@ -10,6 +10,7 @@ import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.card.CardBlockRequestService;
 import com.example.bankcards.service.card.CardService;
+import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.enums.CardStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,23 +28,20 @@ import java.util.Optional;
 public class CardBlockRequestServiceImpl implements CardBlockRequestService {
 
     private final CardBlockRequestRepository cardBlockRequestRepository;
-    private final UserRepository userRepository;
     private final CardService cardService;
-    private final JwtProvider jwtProvider;
+    private final UserService userService;
 
     @Autowired
-    public CardBlockRequestServiceImpl(CardBlockRequestRepository cardBlockRequestRepository, UserRepository userRepository, CardService cardService, JwtProvider jwtProvider) {
+    public CardBlockRequestServiceImpl(CardBlockRequestRepository cardBlockRequestRepository, CardService cardService, UserService userService) {
         this.cardBlockRequestRepository = cardBlockRequestRepository;
-        this.userRepository = userRepository;
         this.cardService = cardService;
-        this.jwtProvider = jwtProvider;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
-    public CardBlockRequest makeRequest(Integer cardId, String authHeader) {
-        int userId = jwtProvider.extrackId(authHeader);
-        User user = findUser(userId);
+    public CardBlockRequest makeRequest(Integer cardId) {
+        User user = userService.findCurrentUser();
         Card card = cardService.findCardById(cardId);
         List<Card> usersCards = user.getCards();
 
@@ -60,12 +58,8 @@ public class CardBlockRequestServiceImpl implements CardBlockRequestService {
             throw new CardBlockRequestException("Карта заблокирована либо удалена");
         }
 
-        //Можно вынести это в отдельный метод используя Factory pattern,
-        // но я решил сделать так
-        CardBlockRequest cardBlockRequest = new CardBlockRequest();
-        cardBlockRequest.setCardId(cardId);
-        cardBlockRequest.setRequestedUserId(userId);
-        cardBlockRequest.setRequestedAt(LocalDate.now());
+        CardBlockRequest cardBlockRequest =
+                new CardBlockRequest(cardId, user.getId(), LocalDate.now());
 
         return cardBlockRequestRepository.save(cardBlockRequest);
     }
@@ -95,12 +89,6 @@ public class CardBlockRequestServiceImpl implements CardBlockRequestService {
         return cardBlockRequestRepository.findAll(pageable);
     }
 
-
-    private User findUser(int userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(()->new UserException("Пользователь с id: "
-                        + userId + " не найден"));
-    }
 
     private CardBlockRequest findCardBlockRequest(Integer cardBlockRequestId) {
         return cardBlockRequestRepository.findById(cardBlockRequestId)

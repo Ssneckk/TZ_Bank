@@ -60,25 +60,23 @@ class CardControllerTest {
     @Test
     void getCard_shouldReturnFullCard() throws Exception {
         FullCardRecordDTO fullCard = fullCardRecordDTO;
-        when(cardService.getCard(1, "Bearer token")).thenReturn(fullCard);
+        when(cardService.getCard(1)).thenReturn(fullCard);
 
-        mockMvc.perform(get("/api/cards/1")
-                        .header("Authorization", "Bearer token"))
+        mockMvc.perform(get("/api/cards/1"))
                 .andExpect(status().isOk());
 
-        verify(cardService).getCard(1, "Bearer token");
+        verify(cardService).getCard(1);
     }
 
     @Test
     void makeCardBlockRequest_shouldReturnCardBlockRequest() throws Exception {
         CardBlockRequest blockRequest = new CardBlockRequest();
-        when(cardBlockRequestService.makeRequest(1, "Bearer token")).thenReturn(blockRequest);
+        when(cardBlockRequestService.makeRequest(1)).thenReturn(blockRequest);
 
-        mockMvc.perform(post("/api/cards/1/block-request")
-                        .header("Authorization", "Bearer token"))
+        mockMvc.perform(post("/api/cards/1/block-request"))
                 .andExpect(status().isOk());
 
-        verify(cardBlockRequestService).makeRequest(1, "Bearer token");
+        verify(cardBlockRequestService).makeRequest(1);
     }
 
     @Test
@@ -86,15 +84,14 @@ class CardControllerTest {
         TransferRequest transferRequest = new TransferRequest(1, 2, new BigDecimal("100.00"));
         Map<String, String> response = Map.of("message", "Транзакция успешно завершена");
 
-        when(transferService.transferBetweenOwnCards(any(TransferRequest.class), anyString())).thenReturn(response);
+        when(transferService.transferBetweenOwnCards(any(TransferRequest.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/cards/transfer")
-                        .header("Authorization", "Bearer token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(transferRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Транзакция успешно завершена"));
 
-        verify(transferService).transferBetweenOwnCards(any(TransferRequest.class), anyString());
+        verify(transferService).transferBetweenOwnCards(any(TransferRequest.class));
     }
 }

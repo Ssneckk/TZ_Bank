@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface CardBlockRequestService {
 
-    CardBlockRequest makeRequest(Integer cardId, String authHeader);
+    CardBlockRequest makeRequest(Integer cardId);
 
     Map<String,String> blockByRequest(Integer cardBlockRequestId);
 

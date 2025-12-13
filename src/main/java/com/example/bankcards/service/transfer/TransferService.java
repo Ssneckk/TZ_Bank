@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface TransferService {
 
-    Map<String,String> transferBetweenOwnCards(TransferRequest transferRequest, String token);
+    Map<String,String> transferBetweenOwnCards(TransferRequest transferRequest);
 }

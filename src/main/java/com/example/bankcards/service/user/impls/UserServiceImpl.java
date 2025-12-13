@@ -3,11 +3,15 @@ package com.example.bankcards.service.user.impls;
 import com.example.bankcards.dto.UserDTO;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.TokenException;
+import com.example.bankcards.exception.UserException;
 import com.example.bankcards.repository.UserRepository;
+import com.example.bankcards.security.UserDetailsImpls;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.converters.UserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getInfo(Integer user_id) {
 
-        User user = userRepository.findById(user_id)
-                .orElseThrow(()-> new TokenException("User с id из токена: "
-                        + user_id + " не найден"));
+        User user = findUserById(user_id);
 
         return userConverter.convertToDTO(user);
     }
@@ -38,5 +40,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(userConverter::convertToDTO).toList();
+    }
+
+    @Override
+    public int getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpls userDetails = (UserDetailsImpls) auth.getPrincipal();
+        return userDetails.getId();
+    }
+
+    @Override
+    public User findCurrentUser() {
+        int userId = getCurrentUserId();
+        return findUserById(userId);
+    }
+
+    public User findUserById(Integer user_id) {
+        return userRepository.findById(user_id)
+                .orElseThrow(()-> new UserException("User с id: "
+                        + user_id + " не найден"));
     }
 }
