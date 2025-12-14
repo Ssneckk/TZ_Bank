@@ -3,8 +3,9 @@ package com.example.bankcards.service.card.impls;
 import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.security.jwt.JwtProvider;
 import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.converters.CardConverter;
@@ -41,7 +42,7 @@ class CardServiceImplTest {
     }
 
     @Test
-    void getCards_shouldReturnMappedPage() {
+    void getUsersCards_shouldReturnMappedPage() {
         Pageable pageable = PageRequest.of(0, 10);
         Card card = new Card();
         Page<Card> cardPage = new PageImpl<>(List.of(card));
@@ -57,7 +58,23 @@ class CardServiceImplTest {
     }
 
     @Test
-    void getUsersCards_shouldReturnMappedPage() {
+    void getUsersCard_shouldThrowUserException() {
+
+        int cardId = 1;
+        Card card = new Card();
+        int userId = 1;
+
+        when(userService.getCurrentUserId()).thenReturn(userId);
+        when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
+        when(cardRepository.existsByIdAndUserId(cardId, userId)).thenReturn(false);
+
+        assertThrows(UserException.class, () -> {
+            cardService.getUsersCard(cardId);
+        });
+    }
+
+    @Test
+    void getCards_shouldReturnMappedPage() {
         int userId = 1;
         Pageable pageable = PageRequest.of(0, 10);
         Card card = new Card();
@@ -76,7 +93,7 @@ class CardServiceImplTest {
     }
 
     @Test
-    void getCard_shouldReturnFullCardRecordDTO() {
+    void getCard_shouldReturnFullUsersCardRecordDTO() {
         String authHeader = "auth";
         int cardId = 1;
         int userId = 2;
@@ -88,7 +105,7 @@ class CardServiceImplTest {
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
         when(cardConverter.convertToFullCardRecord(card)).thenReturn(dto);
 
-        FullCardRecordDTO result = cardService.getCard(cardId);
+        FullCardRecordDTO result = cardService.getUsersCard(cardId);
 
         assertEquals(dto, result);
         verify(userService).getCurrentUserId();

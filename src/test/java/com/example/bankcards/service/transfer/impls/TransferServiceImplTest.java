@@ -3,6 +3,7 @@ package com.example.bankcards.service.transfer.impls;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.exception.exceptions.TransferException;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.service.transfer.TransferService;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;
@@ -24,12 +25,14 @@ class TransferServiceImplTest {
     private CardRepository cardRepository;
     private TransferService transferService;
     private UserService userService;
+    private CardService cardService;
 
     @BeforeEach
     void setUp() {
         userService = Mockito.mock(UserService.class);
         cardRepository = Mockito.mock(CardRepository.class);
-        transferService = new TransferServiceImpl(cardRepository, userService);
+        cardService = Mockito.mock(CardService.class);
+        transferService = new TransferServiceImpl(cardRepository, userService,cardService);
     }
 
     @Test
@@ -53,8 +56,8 @@ class TransferServiceImplTest {
         when(cardRepository.existsByIdAndUserId(cardFromId, userId)).thenReturn(true);
         when(cardRepository.existsByIdAndUserId(cardToId, userId)).thenReturn(true);
 
-        when(cardRepository.findById(cardFromId)).thenReturn(Optional.of(cardFrom));
-        when(cardRepository.findById(cardToId)).thenReturn(Optional.of(cardTo));
+        when(cardService.findCardById(cardFromId)).thenReturn(cardFrom);
+        when(cardService.findCardById(cardToId)).thenReturn(cardTo);
 
         String successMessage = "Транзакция успешно завершена";
 
@@ -64,8 +67,8 @@ class TransferServiceImplTest {
         verify(userService).getCurrentUserId();
         verify(cardRepository).existsByIdAndUserId(cardFromId, userId);
         verify(cardRepository).existsByIdAndUserId(cardToId, userId);
-        verify(cardRepository).findById(cardFromId);
-        verify(cardRepository).findById(cardToId);
+        verify(cardService).findCardById(cardFromId);
+        verify(cardService).findCardById(cardToId);
     }
 
     @Test

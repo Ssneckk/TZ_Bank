@@ -3,6 +3,7 @@ package com.example.bankcards.service.card.impls;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.exception.exceptions.CardException;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.util.enums.CardStatusEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,13 @@ import static org.mockito.Mockito.*;
 
 class CardDeletionServiceimplTest {
 
-    private CardRepository cardRepository;
+    private CardService cardService;
     private CardDeletionServiceimpl cardDeletionService;
 
     @BeforeEach
     void setUp() {
-        cardRepository = Mockito.mock(CardRepository.class);
-        cardDeletionService = new CardDeletionServiceimpl(cardRepository);
+        cardService = Mockito.mock(CardService.class);
+        cardDeletionService = new CardDeletionServiceimpl(cardService);
     }
 
     @Test
@@ -31,12 +32,12 @@ class CardDeletionServiceimplTest {
         card.setBalance(BigDecimal.ZERO);
         card.setStatus(CardStatusEnum.ACTIVE);
 
-        when(cardRepository.findById(1)).thenReturn(Optional.of(card));
+        when(cardService.findCardById(1)).thenReturn(card);
 
         cardDeletionService.delete(1);
 
         assertEquals(CardStatusEnum.DELETED, card.getStatus());
-        verify(cardRepository).findById(1);
+        verify(cardService).findCardById(1);
     }
 
     @Test
@@ -44,17 +45,9 @@ class CardDeletionServiceimplTest {
         Card card = new Card();
         card.setBalance(BigDecimal.valueOf(100));
 
-        when(cardRepository.findById(1)).thenReturn(Optional.of(card));
+        when(cardService.findCardById(1)).thenReturn(card);
 
         CardException exception = assertThrows(CardException.class, () -> cardDeletionService.delete(1));
         assertEquals("Баланс на карте не равен 0", exception.getMessage());
-    }
-
-    @Test
-    void delete_shouldThrowException_whenCardNotFound() {
-        when(cardRepository.findById(1)).thenReturn(Optional.empty());
-
-        CardException exception = assertThrows(CardException.class, () -> cardDeletionService.delete(1));
-        assertEquals("Карта с id: 1 не найдена", exception.getMessage());
     }
 }

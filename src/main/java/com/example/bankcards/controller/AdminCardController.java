@@ -4,6 +4,8 @@ import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.dto.SimpleCardRecordDTO;
 import com.example.bankcards.entity.CardBlockRequest;
 import com.example.bankcards.service.card.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class AdminCardController {
     private final CardStatusService cardStatusService;
     private final CardDeletionService cardDeletionService;
     private final CardBlockRequestService cardBlockRequestService;
+    private static final Logger log = LoggerFactory.getLogger(AdminCardController.class);
 
     @Autowired
     public AdminCardController(CardCreationService cardCreationService, CardService cardService, CardStatusService cardStatusService, CardDeletionService cardDeletionService, CardBlockRequestService cardBlockRequestService) {
@@ -53,7 +56,12 @@ public class AdminCardController {
     @PostMapping("/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<FullCardRecordDTO> createCard(@PathVariable Integer userId) {
-        return ResponseEntity.ok(cardCreationService.createCard(userId));
+        log.info("ADMIN запросил создание карты для пользователя id={}", userId);
+
+        FullCardRecordDTO card = cardCreationService.createCard(userId);
+        log.debug("Создана карта: {}", card);
+
+        return ResponseEntity.ok(card);
     }
 
     /**
@@ -64,7 +72,12 @@ public class AdminCardController {
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<SimpleCardRecordDTO>> getCards(Pageable pageable) {
-        return ResponseEntity.ok(cardService.getCards(pageable));
+        log.info("ADMIN запросил список карт. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<SimpleCardRecordDTO> cards = cardService.getCards(pageable);
+        log.debug("Количество карт возвращено: {}", cards.getContent().size());
+
+        return ResponseEntity.ok(cards);
     }
 
     /**
@@ -75,7 +88,12 @@ public class AdminCardController {
     @PatchMapping("/{cardId}/block")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, String>> blockCard(@PathVariable Integer cardId) {
-        return ResponseEntity.ok(cardStatusService.blockCard(cardId));
+        log.info("ADMIN запросил блокировку карты id={}", cardId);
+
+        Map<String, String> result = cardStatusService.blockCard(cardId);
+        log.debug("Результат блокировки карты id={}: {}", cardId, result);
+
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -86,7 +104,12 @@ public class AdminCardController {
     @PatchMapping("/{cardId}/activate")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, String>> activateCard(@PathVariable Integer cardId) {
-        return ResponseEntity.ok(cardStatusService.activateCard(cardId));
+        log.info("ADMIN запросил активацию карты id={}", cardId);
+
+        Map<String, String> result = cardStatusService.activateCard(cardId);
+        log.debug("Результат активации карты id={}: {}", cardId, result);
+
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -97,7 +120,10 @@ public class AdminCardController {
     @DeleteMapping("/{cardId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteCard(@PathVariable Integer cardId) {
+        log.info("ADMIN запросил удаление карты id={}", cardId);
+
         cardDeletionService.delete(cardId);
+        log.debug("Карта id={} удалена", cardId);
 
         return ResponseEntity.noContent().build();
     }
@@ -110,7 +136,12 @@ public class AdminCardController {
     @GetMapping("/block-requests")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<CardBlockRequest>> getRequests(Pageable pageable) {
-        return ResponseEntity.ok(cardBlockRequestService.getRequests(pageable));
+        log.info("ADMIN запросил список запросов на блокировку карт. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<CardBlockRequest> requests = cardBlockRequestService.getRequests(pageable);
+        log.debug("Количество запросов возвращено: {}", requests.getContent().size());
+
+        return ResponseEntity.ok(requests);
     }
 
     /**
@@ -121,6 +152,11 @@ public class AdminCardController {
     @DeleteMapping("/block-requests/{requestId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, String>> blockCardByRequest(@PathVariable Integer requestId) {
-        return ResponseEntity.ok(cardBlockRequestService.blockByRequest(requestId));
+        log.info("ADMIN запросил блокировку карты по запросу id={}", requestId);
+
+        Map<String, String> result = cardBlockRequestService.blockByRequest(requestId);
+        log.debug("Результат блокировки по запросу id={}: {}", requestId, result);
+
+        return ResponseEntity.ok(result);
     }
 }

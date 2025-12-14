@@ -4,8 +4,10 @@ import com.example.bankcards.dto.FullCardRecordDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.exceptions.TokenException;
+import com.example.bankcards.exception.exceptions.UserException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
+import com.example.bankcards.service.card.CardNumberGenerator;
 import com.example.bankcards.util.auxiliaryclasses.crypto.CryptoUtil;
 import com.example.bankcards.util.converters.CardConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +27,11 @@ class CardCreationServiceImplTest {
     private CryptoUtil cryptoUtil;
     private CardConverter cardConverter;
     private CardCreationServiceImpl cardService;
+    private CardNumberGenerator cardNumberGenerator;
 
     @BeforeEach
     void setUp() {
+        cardNumberGenerator = mock(CardNumberGenerator.class);
         cardRepository = mock(CardRepository.class);
         userRepository = mock(UserRepository.class);
         cryptoUtil = mock(CryptoUtil.class);
@@ -40,13 +44,11 @@ class CardCreationServiceImplTest {
 
         Integer userId = 1;
         User user = new User();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
         CardCreationServiceImpl spyService = spy(cardService);
-        doReturn("4231000000001234").when(spyService).generateCardNumber();
 
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(spyService.generateCardNumber()).thenReturn("4231000000001234");
         when(cryptoUtil.encrypt("4231000000001234")).thenReturn("encryptedCard1234");
-
         Card savedCard = new Card(LocalDate.now().plusYears(1), user, "encryptedCard1234", "1234");
         when(cardRepository.save(any(Card.class))).thenReturn(savedCard);
 
@@ -67,7 +69,7 @@ class CardCreationServiceImplTest {
         Integer userId = 1;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(TokenException.class, () -> cardService.createCard(userId));
+        assertThrows(UserException.class, () -> cardService.createCard(userId));
 
         verify(userRepository).findById(userId);
         verifyNoInteractions(cardRepository, cryptoUtil, cardConverter);

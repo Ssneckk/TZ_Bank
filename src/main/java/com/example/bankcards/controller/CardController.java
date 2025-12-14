@@ -8,6 +8,8 @@ import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.service.transfer.TransferService;
 import com.example.bankcards.util.auxiliaryclasses.request.TransferRequest;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ public class CardController {
     public final CardService cardService;
     public final TransferService transferService;
     public final CardBlockRequestService cardBlockRequestService;
+    private static final Logger log = LoggerFactory.getLogger(CardController.class);
 
     @Autowired
     public CardController(CardService cardService, TransferService transferService, CardBlockRequestService cardBlockRequestService) {
@@ -51,7 +54,12 @@ public class CardController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<Page<SimpleCardRecordDTO>> getUsersCards(@PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(cardService.getUsersCards(pageable));
+        log.info("Пользователь запросил свои карты. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<SimpleCardRecordDTO> cards = cardService.getUsersCards(pageable);
+        log.debug("Количество карт на странице: {}", cards.getContent().size());
+
+        return ResponseEntity.ok(cards);
     }
 
     /**
@@ -62,7 +70,12 @@ public class CardController {
     @GetMapping("/{cardId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<FullCardRecordDTO> getCard(@PathVariable Integer cardId) {
-        return ResponseEntity.ok(cardService.getCard(cardId));
+        log.info("Пользователь запросил полную информацию карты id={}", cardId);
+
+        FullCardRecordDTO card = cardService.getUsersCard(cardId);
+        log.debug("Данные карты id={} получены", cardId);
+
+        return ResponseEntity.ok(card);
     }
 
     /**
@@ -73,7 +86,12 @@ public class CardController {
     @PostMapping("/{cardId}/block-request")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<CardBlockRequest> makeCardBlockRequest(@PathVariable Integer cardId) {
-        return ResponseEntity.ok(cardBlockRequestService.makeRequest(cardId));
+        log.info("Пользователь отправил запрос на блокировку карты id={}", cardId);
+
+        CardBlockRequest request = cardBlockRequestService.makeRequest(cardId);
+        log.debug("Запрос на блокировку карты id={} создан: {}", cardId, request);
+
+        return ResponseEntity.ok(request);
     }
 
     /**
@@ -85,9 +103,12 @@ public class CardController {
     @PostMapping("/transfer")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<Map<String, String>> transfer(@RequestBody @Valid TransferRequest transferRequest) {
-        return ResponseEntity.ok(transferService.transferBetweenOwnCards(transferRequest));
+        log.info("Пользователь инициировал перевод между своими картами. От cardId={}, к cardId={}",
+                transferRequest.getFromCardId(), transferRequest.getToCardId());
+
+        Map<String, String> result = transferService.transferBetweenOwnCards(transferRequest);
+        log.debug("Результат перевода: {}", result);
+
+        return ResponseEntity.ok(result);
     }
-
-
-
 }

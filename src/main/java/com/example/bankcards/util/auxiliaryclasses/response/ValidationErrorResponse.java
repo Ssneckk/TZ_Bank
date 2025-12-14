@@ -2,6 +2,12 @@ package com.example.bankcards.util.auxiliaryclasses.response;
 
 import java.util.Map;
 
+/**
+ * DTO ответа об ошибке Валидации.
+ *
+ * <p>Используется для передачи информации об ошибке клиенту,
+ * включая HTTP-статус и описание проблемы и полей, где возникла проблема.</p>
+ */
 public class ValidationErrorResponse {
 
     private int status;

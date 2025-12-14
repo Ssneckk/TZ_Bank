@@ -6,6 +6,8 @@ import com.example.bankcards.service.user.RegisterService;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterRequest;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class AdminUserController {
     private final RegisterService registerService;
     private final UserService userService;
     private final BlockUserService blockUserService;
+    private static final Logger log = LoggerFactory.getLogger(AdminUserController.class);
 
     @Autowired
     public AdminUserController(RegisterService registerService, UserService userService, BlockUserService blockUserService) {
@@ -51,7 +54,12 @@ public class AdminUserController {
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody AuthAndRegisterRequest authAndRegisterRequest) {
-        return ResponseEntity.ok(registerService.registr(authAndRegisterRequest));
+        log.info("ADMIN запросил регистрацию нового пользователя с email={}", authAndRegisterRequest.getEmail());
+
+        UserDTO registeredUser = registerService.registr(authAndRegisterRequest);
+        log.debug("Зарегистрирован пользователь: {}", registeredUser);
+
+        return ResponseEntity.ok(registeredUser);
     }
 
     /**
@@ -62,7 +70,12 @@ public class AdminUserController {
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<UserDTO>> getUsers(Pageable pageable) {
-        return ResponseEntity.ok(userService.getUsers(pageable));
+        log.info("ADMIN запросил список пользователей. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
+
+        Page<UserDTO> users = userService.getUsers(pageable);
+        log.debug("Количество пользователей на странице: {}", users.getContent().size());
+
+        return ResponseEntity.ok(users);
     }
 
     /**
@@ -73,7 +86,12 @@ public class AdminUserController {
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getAccountInfo(@PathVariable Integer userId) {
-        return ResponseEntity.ok(userService.getInfo(userId));
+        log.info("ADMIN запросил информацию по пользователю id={}", userId);
+
+        UserDTO userDTO = userService.getInfo(userId);
+        log.debug("Данные пользователя: {}", userDTO);
+
+        return ResponseEntity.ok(userDTO);
     }
 
     /**
@@ -86,6 +104,12 @@ public class AdminUserController {
     @PatchMapping("/{userId}/block")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String,String>> block(@PathVariable Integer userId, @RequestParam Boolean blockOrNot) {
-        return ResponseEntity.ok(blockUserService.block(userId, blockOrNot));
+        String action = blockOrNot ? "Блокировка" : "Разблокировка";
+        log.info("ADMIN запросил {} пользователя id={}", action, userId);
+
+        Map<String,String> result = blockUserService.block(userId, blockOrNot);
+        log.debug("{} пользователя id={} завершена. Результат: {}", action, userId, result);
+
+        return ResponseEntity.ok(result);
     }
 }

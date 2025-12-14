@@ -3,6 +3,12 @@ package com.example.bankcards.util.auxiliaryclasses.response;
 
 import java.util.Objects;
 
+/**
+ * DTO ответа на успешную аутентификацию.
+ *
+ * <p>Содержит JWT-токен, который клиент использует
+ * для последующих авторизованных запросов.</p>
+ */
 public class AuthResponse {
     private String token;
 

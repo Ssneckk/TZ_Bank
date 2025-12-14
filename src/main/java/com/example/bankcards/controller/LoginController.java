@@ -4,6 +4,8 @@ import com.example.bankcards.service.user.LoginService;
 import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterRequest;
 import com.example.bankcards.util.auxiliaryclasses.response.AuthResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final LoginService loginService;
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     public LoginController(LoginService loginService) {
@@ -33,6 +36,13 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthAndRegisterRequest authAndRegisterRequest) {
-        return ResponseEntity.ok(loginService.authenticate(authAndRegisterRequest));
+        log.info("Попытка аутентификации пользователя: {}", authAndRegisterRequest.getEmail());
+
+        AuthResponse authResponse = loginService.authenticate(authAndRegisterRequest);
+
+        log.info("Пользователь {} успешно аутентифицирован", authAndRegisterRequest.getEmail());
+        log.debug("JWT token для {} сгенерирован: {}", authAndRegisterRequest.getEmail(), authResponse.getToken().substring(0, 10) + "...");
+
+        return ResponseEntity.ok(authResponse);
     }
 }

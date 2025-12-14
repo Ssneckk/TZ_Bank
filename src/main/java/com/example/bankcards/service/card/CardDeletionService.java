@@ -1,8 +1,15 @@
 package com.example.bankcards.service.card;
 
-import com.example.bankcards.entity.Card;
-
+/**
+ * Сервис для удаления карт пользователей.
+ * Предоставляет метод для логического удаления карты по идентификатору
+ */
 public interface CardDeletionService {
 
-    public void delete(Integer cardId);
+    /**
+     * Логически удаляет карту по её идентификатору
+     *
+     * @param cardId идентификатор карты
+     */
+    void delete(Integer cardId);
 }

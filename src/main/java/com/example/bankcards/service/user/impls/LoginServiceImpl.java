@@ -10,9 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Сервис аутентификации пользователей.
+ *
+ * <p>Отвечает за проверку учетных данных пользователя
+ * и генерацию JWT-токена при успешной аутентификации.</p>
+ *
+ * <p>Используется при входе пользователя в систему.</p>
+ */
 @Service
 public class LoginServiceImpl implements LoginService {
+
+    private static final Logger log = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsServiceImpls;
@@ -26,17 +38,31 @@ public class LoginServiceImpl implements LoginService {
         this.JwtProvider = JwtProvider;
     }
 
+    /**
+     * Выполняет аутентификацию пользователя и возвращает JWT-токен.
+     *
+     * @param authAndRegisterRequest объект с учетными данными пользователя
+     *                              (email и пароль)
+     * @return {@link AuthResponse} объект, содержащий JWT-токен
+     * @throws org.springframework.security.core.AuthenticationException
+     *         если учетные данные некорректны
+     */
     @Override
     public AuthResponse authenticate(AuthAndRegisterRequest authAndRegisterRequest){
+        String email = authAndRegisterRequest.getEmail();
+        log.info("Попытка аутентификации пользователя с email: {}", email);
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authAndRegisterRequest.getEmail(),
+                        email,
                         authAndRegisterRequest.getPassword())
         );
 
         UserDetailsImpls userDetailsImpls = userDetailsServiceImpls.loadUserByUsername(authAndRegisterRequest.getEmail());
         String token = JwtProvider.generateToken(userDetailsImpls);
+
+        log.info("Пользователь успешно аутентифицирован: email={}",
+                email);
 
         return new AuthResponse(token);
     }

@@ -1,6 +1,11 @@
 package com.example.bankcards.util.auxiliaryclasses.response;
 
-
+/**
+ * DTO ответа об ошибке.
+ *
+ * <p>Используется для передачи информации об ошибке клиенту,
+ * включая HTTP-статус и описание проблемы.</p>
+ */
 public class ErrorResponse {
 
     private int status;

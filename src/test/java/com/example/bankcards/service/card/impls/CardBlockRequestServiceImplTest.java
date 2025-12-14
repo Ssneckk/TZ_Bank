@@ -33,6 +33,7 @@ class CardBlockRequestServiceImplTest {
     private CardBlockRequestRepository cardBlockRequestRepository;
     private CardService cardService;
     private UserService userService;
+    private CardRepository cardRepository;
 
     private CardBlockRequestService cardBlockRequestService;
 
@@ -41,11 +42,13 @@ class CardBlockRequestServiceImplTest {
         cardBlockRequestRepository = Mockito.mock(CardBlockRequestRepository.class);
         cardService = Mockito.mock(CardService.class);
         userService = Mockito.mock(UserService.class);
+        cardRepository = Mockito.mock(CardRepository.class);
 
         cardBlockRequestService = new CardBlockRequestServiceImpl(
                 cardBlockRequestRepository,
                 cardService,
-                userService);
+                userService,
+                cardRepository);
     }
 
     @Test
@@ -54,18 +57,17 @@ class CardBlockRequestServiceImplTest {
 
         User user = new User();
         Card card = new Card();
-        user.setCards(new ArrayList<>());
-        user.getCards().add(card);
 
         when(userService.findCurrentUser()).thenReturn(user);
         when(cardService.findCardById(cardId)).thenReturn(card);
-
+        when(cardRepository.existsByIdAndUserId(cardId, user.getId())).thenReturn(true);
         when(cardBlockRequestRepository.findByCardId(cardId)).thenReturn(Optional.empty());
 
         cardBlockRequestService.makeRequest(cardId);
 
         verify(userService).findCurrentUser();
         verify(cardService).findCardById(cardId);
+        verify(cardRepository).existsByIdAndUserId(cardId, user.getId());
         verify(cardBlockRequestRepository).findByCardId(cardId);
     }
 

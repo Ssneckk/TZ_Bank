@@ -17,6 +17,19 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Сервисный слой, реализующий {@link CardStatusService}.
+ * Отвечает за управление статусами карт:
+ * активацию, блокировку и автоматическое истечение срока действия карт.
+ * <p>
+ * Методы класса предоставляют возможности:
+ * </p>
+ * <ul>
+ *     <li>Автоматически помечать просроченные карты как истекшие;</li>
+ *     <li>Блокировать карту по идентификатору;</li>
+ *     <li>Активировать карту по идентификатору.</li>
+ * </ul>
+ */
 @Service
 public class CardStatusServiceImpl implements CardStatusService {
 
@@ -30,51 +43,74 @@ public class CardStatusServiceImpl implements CardStatusService {
         this.cardService = cardService;
     }
 
+    /**
+     * Автоматически обновляет статус всех просроченных карт.
+     * <p>
+     * Метод помечает все карты с датой истечения до текущей как истекшие.
+     * Запускается автоматически с фиксированной задержкой в 24 часа.
+     * </p>
+     * */
     @Override
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     @Transactional
     public void setCardsExpired() {
         int e = cardRepository.markExpired(LocalDate.now());
-        log.info(e + " Cards expired");
+        log.info("Автоматическая проверка и истечение срока карт выполнена. Всего просроченных карт: {}", e);
     }
 
+    /**
+     * Блокирует карту по ее идентификатору.
+     *
+     * @param cardId идентификатор карты для блокировки
+     * @return {@link Map} с сообщением о выполненной блокировке
+     * @throws CardException если карта уже заблокирована или удалена
+     */
     @Override
     @Transactional
-    public Map<String, String> blockCard(Integer card_id) {
-        Map<String, String> response = new HashMap<>();
+    public Map<String, String> blockCard(Integer cardId) {
+        log.info("Попытка блокировки карты с id {}", cardId);
 
-        Card card = cardService.findCardById(card_id);
-
+        Card card = cardService.findCardById(cardId);
         CardStatusEnum cardStatus = card.getStatus();
 
         if (cardStatus == CardStatusEnum.BLOCKED || cardStatus == CardStatusEnum.DELETED) {
+            log.warn("Карта {} уже заблокирована или удалена. Блокировка невозможна.", cardId);
             throw new CardException("Карта уже заблокирована либо удалена");
         }
 
         card.setStatus(CardStatusEnum.BLOCKED);
+        log.info("Карта {} успешно заблокирована", cardId);
 
-        response.put("message of block: ", "Карта с id: " + card_id+" заблокирована");
-
+        Map<String, String> response = new HashMap<>();
+        response.put("message of block: ", "Карта с id: " + cardId +" заблокирована");
         return response;
     }
 
+    /**
+     * Активирует карту по ее идентификатору.
+     *
+     * @param cardId идентификатор карты для активации
+     * @return {@link Map} с сообщением о выполненной активации
+     * @throws CardException если карта удалена
+     */
     @Override
     @Transactional
-    public Map<String, String> activateCard(Integer card_id) {
-        Map<String, String> response = new HashMap<>();
+    public Map<String, String> activateCard(Integer cardId) {
+        log.info("Попытка активации карты с id {}", cardId);
 
-        Card card = cardService.findCardById(card_id);
-
+        Card card = cardService.findCardById(cardId);
         CardStatusEnum cardStatus = card.getStatus();
 
         if (cardStatus == CardStatusEnum.DELETED) {
+            log.warn("Карта {} удалена. Активация невозможна.", cardId);
             throw new CardException("Карта удалена");
         }
 
         card.setStatus(CardStatusEnum.ACTIVE);
+        log.info("Карта {} успешно активирована", cardId);
 
-        response.put("message of activate: ", "Карта с id: " + card_id+" активирована");
-
+        Map<String, String> response = new HashMap<>();
+        response.put("message of activate: ", "Карта с id: " + cardId +" активирована");
         return response;
     }
 }

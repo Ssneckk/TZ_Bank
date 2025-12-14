@@ -12,19 +12,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,6 +38,7 @@ class CardControllerTest {
     private TransferService transferService;
     private CardBlockRequestService cardBlockRequestService;
     private ObjectMapper objectMapper;
+    private CardController cardController;
     private FullCardRecordDTO fullCardRecordDTO = new FullCardRecordDTO(1,
             "**** **** **** 8888", "12/24",
             CardStatusEnum.ACTIVE.toString(),BigDecimal.ZERO);
@@ -50,22 +52,35 @@ class CardControllerTest {
         cardBlockRequestService = Mockito.mock(CardBlockRequestService.class);
         objectMapper = new ObjectMapper();
 
-        CardController cardController = new CardController(cardService, transferService, cardBlockRequestService);
+        cardController = new CardController(cardService, transferService, cardBlockRequestService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(cardController).build();
     }
 
- // У меня возникла проблема с Pageable, а времени разбираться с ним уже не осталось, надо сдавать ТЗ :(
+    @Test
+    void getUsersCards(){
 
+        Page<SimpleCardRecordDTO> simpleCardRecordDTOPage =
+                new PageImpl<>(singletonList(simpleCardRecordDTO));
+
+        when(cardService.getUsersCards(any(Pageable.class))).thenReturn(simpleCardRecordDTOPage);
+
+        Page<SimpleCardRecordDTO> result =
+                cardController.getUsersCards(PageRequest.of(0, 10)).getBody();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isEqualTo(simpleCardRecordDTOPage.getContent());
+        assertThat(result.getTotalElements()).isEqualTo(1);
+    }
     @Test
     void getCard_shouldReturnFullCard() throws Exception {
         FullCardRecordDTO fullCard = fullCardRecordDTO;
-        when(cardService.getCard(1)).thenReturn(fullCard);
+        when(cardService.getUsersCard(1)).thenReturn(fullCard);
 
         mockMvc.perform(get("/api/cards/1"))
                 .andExpect(status().isOk());
 
-        verify(cardService).getCard(1);
+        verify(cardService).getUsersCard(1);
     }
 
     @Test

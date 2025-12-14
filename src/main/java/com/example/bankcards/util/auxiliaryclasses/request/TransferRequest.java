@@ -8,6 +8,12 @@ import org.hibernate.annotations.Check;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
+/**
+ * DTO для запроса перевода средств между картами пользователя.
+ *
+ * <p>Используется в сервисе переводов для передачи информации
+ * о карте-отправителе, карте-получателе и сумме перевода.</p>
+ */
 public class TransferRequest {
 
     @NotNull(message = "id карты не может быть 0")

@@ -9,9 +9,14 @@ import com.example.bankcards.util.auxiliaryclasses.request.AuthAndRegisterReques
 import com.example.bankcards.util.enums.RoleEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.mapping.Collection;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,6 +39,7 @@ class AdminUserControllerTest {
     private UserService userService;
     private BlockUserService blockUserService;
     private ObjectMapper objectMapper;
+    private AdminUserController adminUserController;
 
     private UserDTO userDTO =
             new UserDTO(1, "test@email.com", false,List.of());
@@ -48,9 +54,9 @@ class AdminUserControllerTest {
         blockUserService = Mockito.mock(BlockUserService.class);
         objectMapper = new ObjectMapper();
 
-        AdminUserController controller = new AdminUserController(registerService, userService, blockUserService);
+        adminUserController = new AdminUserController(registerService, userService, blockUserService);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(adminUserController).build();
     }
 
     @Test
@@ -65,6 +71,20 @@ class AdminUserControllerTest {
                 .andExpect(jsonPath("$.email").value(userDTO.getEmail()));
 
         verify(registerService).registr(any(AuthAndRegisterRequest.class));
+    }
+
+    @Test
+    void getUsers_shouldReturnUserDTOs(){
+
+        Page<UserDTO> userDTOPage = new PageImpl<>(Collections.singletonList(userDTO));
+
+        when(userService.getUsers(any(Pageable.class))).thenReturn(userDTOPage);
+
+        Page<UserDTO> result =
+                adminUserController.getUsers(PageRequest.of(0, 10)).getBody();
+
+        Assertions.assertEquals(1, result.getContent().size());
+        Assertions.assertEquals(userDTO, result.getContent().get(0));
     }
 
     @Test
