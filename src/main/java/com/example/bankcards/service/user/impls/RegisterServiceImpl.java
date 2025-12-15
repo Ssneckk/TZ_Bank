@@ -51,10 +51,10 @@ public class RegisterServiceImpl implements RegisterService {
     @Transactional
     public UserDTO registr(AuthAndRegisterRequest authAndRegisterRequest) {
         String email = authAndRegisterRequest.getEmail();
-        log.info("Начало регистрации пользователя с email: {}", email);
+        log.info("RegisterService: Начало регистрации пользователя с email: {}", email);
 
         if(userRepository.findByEmail(email).isPresent()) {
-            log.warn("Попытка регистрации с уже существующим email: {}", email);
+            log.warn("RegisterService: Попытка регистрации с уже существующим email: {}", email);
             throw new UserException("User c таким Email: "
                     + email + " уже существует");
         }
@@ -68,7 +68,7 @@ public class RegisterServiceImpl implements RegisterService {
         role.setUser(newUser);
         newUser.setRoles(userRole);
 
-        log.info("Пользователь успешно зарегистрирован: email={}, id={}", email, newUser.getId());
+        log.info("RegisterService: Пользователь успешно зарегистрирован: email={}, id={}", email, newUser.getId());
 
         return userConverter.convertToDTO(newUser);
     }

@@ -68,7 +68,7 @@ public class TransferServiceImpl implements TransferService {
         int cardToId = transferRequest.getToCardId();
         BigDecimal amount = transferRequest.getAmount();
 
-        log.info("Начало перевода {} с карты {} на карту {} для пользователя {}",
+        log.info("TransferService: Начало перевода {} с карты {} на карту {} для пользователя {}",
                 amount, cardFromId, cardToId, userId);
 
         //Проверка карт на принадлежность текущему пользователю
@@ -87,7 +87,7 @@ public class TransferServiceImpl implements TransferService {
         cardFrom.setBalance(cardFrom.getBalance().subtract(amount));
         cardTo.setBalance(cardTo.getBalance().add(amount));
 
-        log.info("Перевод {} успешно выполнен с карты {} на карту {} для пользователя {}. Балансы: от {} до {}",
+        log.info("TransferService: Перевод {} успешно выполнен с карты {} на карту {} для пользователя {}. Балансы: от {} до {}",
                 amount, cardFromId, cardToId, userId, cardFrom.getBalance(), cardTo.getBalance());
 
         Map<String,String> response = new HashMap<>();
@@ -98,7 +98,7 @@ public class TransferServiceImpl implements TransferService {
 
     protected void checkBalanceFromCard(BigDecimal cardsFromBalance, BigDecimal amountToTransfer) {
         if(cardsFromBalance.compareTo(amountToTransfer)<0){
-            log.warn("Недостаточно средств на карте. Требуется: {}, доступно: {}", amountToTransfer, cardsFromBalance);
+            log.warn("TransferService: Недостаточно средств на карте. Требуется: {}, доступно: {}", amountToTransfer, cardsFromBalance);
             throw new TransferException("на карте недостаточно средств");
         }
     }
@@ -108,7 +108,7 @@ public class TransferServiceImpl implements TransferService {
         boolean card2Exists = cardRepository.existsByIdAndUserId(card2, userId);
 
         if(!card1Exists || !card2Exists) {
-            log.warn("Одна или обе карты не принадлежат пользователю {}. Карты: {}, {}", userId, card1, card2);
+            log.warn("TransferService: Одна или обе карты не принадлежат пользователю {}. Карты: {}, {}", userId, card1, card2);
             throw new TransferException("Одна из карт вам не принадлежит");
         }
     }

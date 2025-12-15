@@ -54,10 +54,10 @@ public class AdminUserController {
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody AuthAndRegisterRequest authAndRegisterRequest) {
-        log.info("ADMIN запросил регистрацию нового пользователя с email={}", authAndRegisterRequest.getEmail());
+        log.info("AdminUserController: ADMIN запросил регистрацию нового пользователя с email={}", authAndRegisterRequest.getEmail());
 
         UserDTO registeredUser = registerService.registr(authAndRegisterRequest);
-        log.debug("Зарегистрирован пользователь: {}", registeredUser);
+        log.debug("AdminUserController: Зарегистрирован пользователь: {}", registeredUser);
 
         return ResponseEntity.ok(registeredUser);
     }
@@ -70,10 +70,10 @@ public class AdminUserController {
     @GetMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<UserDTO>> getUsers(Pageable pageable) {
-        log.info("ADMIN запросил список пользователей. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("AdminUserController: ADMIN запросил список пользователей. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
 
         Page<UserDTO> users = userService.getUsers(pageable);
-        log.debug("Количество пользователей на странице: {}", users.getContent().size());
+        log.debug("AdminUserController: Количество пользователей на странице: {}", users.getContent().size());
 
         return ResponseEntity.ok(users);
     }
@@ -86,10 +86,10 @@ public class AdminUserController {
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getAccountInfo(@PathVariable Integer userId) {
-        log.info("ADMIN запросил информацию по пользователю id={}", userId);
+        log.info("AdminUserController: ADMIN запросил информацию по пользователю id={}", userId);
 
         UserDTO userDTO = userService.getInfo(userId);
-        log.debug("Данные пользователя: {}", userDTO);
+        log.debug("AdminUserController: Данные пользователя: {}", userDTO);
 
         return ResponseEntity.ok(userDTO);
     }
@@ -105,10 +105,10 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String,String>> block(@PathVariable Integer userId, @RequestParam Boolean blockOrNot) {
         String action = blockOrNot ? "Блокировка" : "Разблокировка";
-        log.info("ADMIN запросил {} пользователя id={}", action, userId);
+        log.info("AdminUserController: ADMIN запросил {} пользователя id={}", action, userId);
 
         Map<String,String> result = blockUserService.block(userId, blockOrNot);
-        log.debug("{} пользователя id={} завершена. Результат: {}", action, userId, result);
+        log.debug("AdminUserController: {} пользователя id={} завершена. Результат: {}", action, userId, result);
 
         return ResponseEntity.ok(result);
     }

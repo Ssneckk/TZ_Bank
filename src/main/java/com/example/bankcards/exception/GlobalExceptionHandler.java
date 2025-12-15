@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     // ------------------ 404 NOT FOUND ------------------
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        log.warn("UsernameNotFoundException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: UsernameNotFoundException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(404,e.getMessage()),
                 HttpStatus.NOT_FOUND);
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     // ------------------ 401 UNAUTHORIZED ------------------
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<ErrorResponse> handleTokenException(TokenException e) {
-        log.warn("TokenException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: TokenException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(401, e.getMessage()),
                 HttpStatus.UNAUTHORIZED);
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ErrorResponse> handleLockedException(LockedException e) {
-        log.warn("LockedException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: LockedException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(401, "Аккаунт заблокирован"),
                 HttpStatus.UNAUTHORIZED
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ErrorResponse> handleSecurityException(SecurityException e) {
-        log.warn("SecurityException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: SecurityException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(401, e.getMessage()),
                 HttpStatus.UNAUTHORIZED
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     // ------------------ 400 BAD REQUEST ------------------
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserException e) {
-        log.warn("UserException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: UserException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(400, e.getMessage()),
                 HttpStatus.BAD_REQUEST
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CardException.class)
     public ResponseEntity<ErrorResponse> handleCardException(CardException e) {
-        log.warn("CardException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: CardException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(400, e.getMessage()),
                 HttpStatus.BAD_REQUEST
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.warn("MethodArgumentNotValidException: validation failed");
+        log.warn("GlobalExceptionHandler: MethodArgumentNotValidException: validation failed");
 
         Map<String, String> errors = new HashMap<>();
 
@@ -114,7 +114,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CardBlockRequestException.class)
     public ResponseEntity<ErrorResponse> handleCardBlockRequestException(CardBlockRequestException e) {
-        log.warn("CardBlockRequestException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler:CardBlockRequestException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(400, e.getMessage()),
                 HttpStatus.BAD_REQUEST
@@ -123,7 +123,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TransferException.class)
     public ResponseEntity<ErrorResponse> handleCardBlockRequestException(TransferException e) {
-        log.warn("TransferException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: TransferException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(400, e.getMessage()),
                 HttpStatus.BAD_REQUEST
@@ -132,7 +132,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CryptoUtilException.class)
     public ResponseEntity<ErrorResponse> handleCryptoUtilException(CryptoUtilException e) {
-        log.warn("CryptoUtilException: {}", e.getMessage());
+        log.debug("GlobalExceptionHandler: CryptoUtilException: {}", e.getMessage());
         return new ResponseEntity<>(
                 new ErrorResponse(400, e.getMessage()),
                 HttpStatus.BAD_REQUEST

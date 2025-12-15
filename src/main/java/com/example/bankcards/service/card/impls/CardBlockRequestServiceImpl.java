@@ -75,11 +75,11 @@ public class CardBlockRequestServiceImpl implements CardBlockRequestService {
         Card card = cardService.findCardById(cardId);
         boolean exists = cardRepository.existsByIdAndUserId(cardId, currentUser.getId());
 
-        log.info("Пользователь {} пытается создать заявку на блокировку карты с id {}", currentUser.getId(), cardId);
+        log.info("CardBlockRequestService: Пользователь {} пытается создать заявку на блокировку карты с id {}", currentUser.getId(), cardId);
 
         //Проверка принадлежности пользователю
         if (!exists) {
-            log.warn("Пользователь {} попытался заблокировать чужую карту {}", currentUser.getId(), cardId);
+            log.warn("CardBlockRequestService: Пользователь {} попытался заблокировать чужую карту {}", currentUser.getId(), cardId);
             throw new CardBlockRequestException("Вы не можете подать заявку на блокировку не своей карты");
         }
 
@@ -87,13 +87,13 @@ public class CardBlockRequestServiceImpl implements CardBlockRequestService {
 
         //Проверка есть ли уже активная заявка на блокировку этой карты
         if (optionalCardBlockRequest.isPresent()) {
-            log.warn("Пользователь {} попытался создать дубликат заявки на карту {}", currentUser.getId(), cardId);
+            log.warn("CardBlockRequestService: Пользователь {} попытался создать дубликат заявки на карту {}", currentUser.getId(), cardId);
             throw new CardBlockRequestException("Уже есть активная заявка на блокировку этой карты");
         }
 
         //Проверка текущего статуса карты
         if(card.getStatus().equals(CardStatusEnum.BLOCKED) || card.getStatus() == CardStatusEnum.DELETED) {
-            log.warn("Пользователь {} попытался заблокировать карту {} со статусом {}", currentUser.getId(), cardId, card.getStatus());
+            log.warn("CardBlockRequestService: Пользователь {} попытался заблокировать карту {} со статусом {}", currentUser.getId(), cardId, card.getStatus());
             throw new CardBlockRequestException("Карта заблокирована либо удалена");
         }
 
@@ -101,7 +101,7 @@ public class CardBlockRequestServiceImpl implements CardBlockRequestService {
                 new CardBlockRequest(cardId, currentUser.getId(), LocalDate.now());
         CardBlockRequest savedRequest = cardBlockRequestRepository.save(cardBlockRequest);
 
-        log.info("Создана заявка на блокировку карты {} пользователем {}", cardId, currentUser.getId());
+        log.info("CardBlockRequestService: Создана заявка на блокировку карты {} пользователем {}", cardId, currentUser.getId());
 
         return savedRequest;
     }

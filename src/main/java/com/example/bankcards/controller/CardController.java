@@ -54,10 +54,10 @@ public class CardController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<Page<SimpleCardRecordDTO>> getUsersCards(@PageableDefault(size = 10) Pageable pageable) {
-        log.info("Пользователь запросил свои карты. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("CardController: Пользователь запросил свои карты. Страница={}, размер={}", pageable.getPageNumber(), pageable.getPageSize());
 
         Page<SimpleCardRecordDTO> cards = cardService.getUsersCards(pageable);
-        log.debug("Количество карт на странице: {}", cards.getContent().size());
+        log.debug("CardController: Количество карт на странице: {}", cards.getContent().size());
 
         return ResponseEntity.ok(cards);
     }
@@ -70,10 +70,10 @@ public class CardController {
     @GetMapping("/{cardId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<FullCardRecordDTO> getCard(@PathVariable Integer cardId) {
-        log.info("Пользователь запросил полную информацию карты id={}", cardId);
+        log.info("CardController: Пользователь запросил полную информацию карты id={}", cardId);
 
         FullCardRecordDTO card = cardService.getUsersCard(cardId);
-        log.debug("Данные карты id={} получены", cardId);
+        log.debug("CardController: Данные карты id={} получены", cardId);
 
         return ResponseEntity.ok(card);
     }
@@ -86,10 +86,10 @@ public class CardController {
     @PostMapping("/{cardId}/block-request")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<CardBlockRequest> makeCardBlockRequest(@PathVariable Integer cardId) {
-        log.info("Пользователь отправил запрос на блокировку карты id={}", cardId);
+        log.info("CardController: Пользователь отправил запрос на блокировку карты id={}", cardId);
 
         CardBlockRequest request = cardBlockRequestService.makeRequest(cardId);
-        log.debug("Запрос на блокировку карты id={} создан: {}", cardId, request);
+        log.debug("CardController: Запрос на блокировку карты id={} создан: {}", cardId, request);
 
         return ResponseEntity.ok(request);
     }
@@ -103,11 +103,11 @@ public class CardController {
     @PostMapping("/transfer")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<Map<String, String>> transfer(@RequestBody @Valid TransferRequest transferRequest) {
-        log.info("Пользователь инициировал перевод между своими картами. От cardId={}, к cardId={}",
+        log.info("CardController: Пользователь инициировал перевод между своими картами. От cardId={}, к cardId={}",
                 transferRequest.getFromCardId(), transferRequest.getToCardId());
 
         Map<String, String> result = transferService.transferBetweenOwnCards(transferRequest);
-        log.debug("Результат перевода: {}", result);
+        log.debug("CardController: Результат перевода: {}", result);
 
         return ResponseEntity.ok(result);
     }

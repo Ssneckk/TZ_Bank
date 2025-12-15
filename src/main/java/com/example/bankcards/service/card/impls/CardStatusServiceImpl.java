@@ -55,7 +55,7 @@ public class CardStatusServiceImpl implements CardStatusService {
     @Transactional
     public void setCardsExpired() {
         int e = cardRepository.markExpired(LocalDate.now());
-        log.info("Автоматическая проверка и истечение срока карт выполнена. Всего просроченных карт: {}", e);
+        log.info("CardStatusService: Автоматическая проверка и истечение срока карт выполнена. Всего просроченных карт: {}", e);
     }
 
     /**
@@ -68,18 +68,18 @@ public class CardStatusServiceImpl implements CardStatusService {
     @Override
     @Transactional
     public Map<String, String> blockCard(Integer cardId) {
-        log.info("Попытка блокировки карты с id {}", cardId);
+        log.info("CardStatusService: Попытка блокировки карты с id {}", cardId);
 
         Card card = cardService.findCardById(cardId);
         CardStatusEnum cardStatus = card.getStatus();
 
         if (cardStatus == CardStatusEnum.BLOCKED || cardStatus == CardStatusEnum.DELETED) {
-            log.warn("Карта {} уже заблокирована или удалена. Блокировка невозможна.", cardId);
+            log.warn("CardStatusService: Карта {} уже заблокирована или удалена. Блокировка невозможна.", cardId);
             throw new CardException("Карта уже заблокирована либо удалена");
         }
 
         card.setStatus(CardStatusEnum.BLOCKED);
-        log.info("Карта {} успешно заблокирована", cardId);
+        log.info("CardStatusService: Карта {} успешно заблокирована", cardId);
 
         Map<String, String> response = new HashMap<>();
         response.put("message of block: ", "Карта с id: " + cardId +" заблокирована");
@@ -96,18 +96,18 @@ public class CardStatusServiceImpl implements CardStatusService {
     @Override
     @Transactional
     public Map<String, String> activateCard(Integer cardId) {
-        log.info("Попытка активации карты с id {}", cardId);
+        log.info("CardStatusService: Попытка активации карты с id {}", cardId);
 
         Card card = cardService.findCardById(cardId);
         CardStatusEnum cardStatus = card.getStatus();
 
         if (cardStatus == CardStatusEnum.DELETED) {
-            log.warn("Карта {} удалена. Активация невозможна.", cardId);
+            log.warn("CardStatusService: Карта {} удалена. Активация невозможна.", cardId);
             throw new CardException("Карта удалена");
         }
 
         card.setStatus(CardStatusEnum.ACTIVE);
-        log.info("Карта {} успешно активирована", cardId);
+        log.info("CardStatusService: Карта {} успешно активирована", cardId);
 
         Map<String, String> response = new HashMap<>();
         response.put("message of activate: ", "Карта с id: " + cardId +" активирована");

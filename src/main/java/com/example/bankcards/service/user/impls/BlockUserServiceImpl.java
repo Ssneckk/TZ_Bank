@@ -41,7 +41,7 @@ public class BlockUserServiceImpl implements BlockUserService {
     @Override
     @Transactional
     public Map<String, String> block(Integer userId , Boolean blockOrNot) {
-        log.info("Начало операции {} пользователя с ID: {}", blockOrNot ? "блокировки" : "разблокировки", userId);
+        log.info("BlockUserService: Начало операции {} пользователя с ID: {}", blockOrNot ? "блокировки" : "разблокировки", userId);
 
         User user = findUserById(userId);
 
@@ -53,11 +53,11 @@ public class BlockUserServiceImpl implements BlockUserService {
 
         if (blockOrNot) {
             response.put("message", "Пользователь с ID: " + userId + " заблокирован");
-            log.info("Пользователь с ID: {} успешно заблокирован", userId);
+            log.info("BlockUserService: Пользователь с ID: {} успешно заблокирован", userId);
         }
         else {
             response.put("message","Пользователь с ID: " + userId + " разблокирован");
-            log.info("Пользователь с ID: {} успешно разблокирован", userId);
+            log.info("ПBlockUserService: ользователь с ID: {} успешно разблокирован", userId);
         }
 
         return response;
@@ -66,7 +66,7 @@ public class BlockUserServiceImpl implements BlockUserService {
     private User findUserById(Integer userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    log.warn("Пользователь с ID: {} не найден", userId);
+                    log.warn("BlockUserService: Пользователь с ID: {} не найден", userId);
                     return new UserException("User с id: " + userId + " не найден");
                 });
     }

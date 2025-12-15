@@ -54,10 +54,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDTO getInfo(Integer userId) {
-        log.info("Запрошена информация о пользователе с id {}", userId);
+        log.info("UserService: Запрошена информация о пользователе с id {}", userId);
 
         User user = findUserById(userId);
-        log.debug("Информация о пользователе {} получена", userId);
+        log.debug("UserService: Информация о пользователе {} получена", userId);
         return userConverter.convertToDTO(user);
     }
 
@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Page<UserDTO> getUsers(Pageable pageable) {
-        log.info("Запрошен список пользователей с пагинацией: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("UserService: Запрошен список пользователей с пагинацией: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
 
         Page<UserDTO> users = userRepository.findAll(pageable).map(userConverter::convertToDTO);
-        log.debug("Получено {} пользователей", users.getNumberOfElements());
+        log.debug("UserService: Получено {} пользователей", users.getNumberOfElements());
         return users;
     }
 

@@ -76,16 +76,16 @@ public class CardCreationServiceImpl implements CardCreationService, CardNumberG
     @Override
     @Transactional
     public FullCardRecordDTO createCard(Integer userId){
-        log.info("Начало создания карты для пользователя с id {}", userId);
+        log.info("CardCreationService: Начало создания карты для пользователя с id {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> {
-                    log.warn("Пользователь с id {} не найден", userId);
+                    log.warn("CardCreationService: Пользователь с id {} не найден", userId);
                     return new UserException("User с id из токена: "
                         + userId + " не найден");});
 
         String cardNumber = generateCardNumber();
-        log.debug("Сгенерирован номер карты для пользователя {}: {}",
+        log.debug("CardCreationService: Сгенерирован номер карты для пользователя {}: {}",
                 userId, cardNumber.substring(cardNumber.length() - 4) + "****");
 
         String last4 = cardNumber.substring(cardNumber.length() - 4);
@@ -99,7 +99,7 @@ public class CardCreationServiceImpl implements CardCreationService, CardNumberG
         newCard.setBalance(BigDecimal.valueOf(50000.00));
 
         Card savedCard = cardRepository.save(newCard);
-        log.info("Карта успешно создана для пользователя {}. ID карты: {}, последние 4 цифры: {}",
+        log.info("CardCreationService: Карта успешно создана для пользователя {}. ID карты: {}, последние 4 цифры: {}",
                 userId, savedCard.getId(), last4);
 
         return cardConverter.convertToFullCardRecord(savedCard);

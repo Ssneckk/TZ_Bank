@@ -43,11 +43,11 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Page<SimpleCardRecordDTO> getCards(Pageable pageable) {
-        log.info("Получение всех карт пользователей с параметрами pageable: {}", pageable);
+        log.info("CardService: Получение всех карт пользователей с параметрами pageable: {}", pageable);
 
         Page<SimpleCardRecordDTO> simpleCardRecordDTOPage = cardRepository.findAll(pageable)
                 .map(cardConverter::convertToSimpleCardRecord);
-        log.debug("Найдено {} карт", simpleCardRecordDTOPage.getTotalElements());
+        log.debug("CardService: Найдено {} карт", simpleCardRecordDTOPage.getTotalElements());
 
         return simpleCardRecordDTOPage;
     }
@@ -55,11 +55,11 @@ public class CardServiceImpl implements CardService {
     @Override
     public Page<SimpleCardRecordDTO> getUsersCards(Pageable pageable) {
         int userId = userService.getCurrentUserId();
-        log.info("Получение карт пользователя с id {} с параметрами pageable: {}", userId, pageable);
+        log.info("CardService: Получение карт пользователя с id {} с параметрами pageable: {}", userId, pageable);
 
         Page<SimpleCardRecordDTO> simpleCardRecordDTOPage = cardRepository.findByUserId(userId, pageable)
                 .map(cardConverter::convertToSimpleCardRecord);
-        log.debug("Найдено {} карт у пользователя {}", simpleCardRecordDTOPage.getTotalElements(), userId);
+        log.debug("CardService: Найдено {} карт у пользователя {}", simpleCardRecordDTOPage.getTotalElements(), userId);
 
         return simpleCardRecordDTOPage;
     }
@@ -67,27 +67,27 @@ public class CardServiceImpl implements CardService {
     @Override
     public FullCardRecordDTO getUsersCard(Integer cardId) {
         int userId = userService.getCurrentUserId();
-        log.info("Получение полной информации о карте {} для пользователя {}", cardId, userId);
+        log.info("CardService: Получение полной информации о карте {} для пользователя {}", cardId, userId);
 
         Card usersCard = findCardById(cardId);
 
         boolean exists = cardRepository.existsByIdAndUserId(cardId, userId);
 
         if(!exists) {
-            log.warn("Карта {} не принадлежит пользователю {}", cardId, userId);
+            log.warn("CardService: Карта {} не принадлежит пользователю {}", cardId, userId);
             throw new UserException("Карта не найдена, проверьте свои карты");
         }
 
-        log.debug("Карта {} найдена для пользователя {}", cardId, userId);
+        log.debug("CardService: Карта {} найдена для пользователя {}", cardId, userId);
         return cardConverter.convertToFullCardRecord(usersCard);
     }
 
     @Override
     public Card findCardById(Integer cardId) {
-        log.info("Поиск карты по id {}", cardId);
+        log.info("CardService: Поиск карты по id {}", cardId);
         return cardRepository.findById(cardId)
                 .orElseThrow(() -> {
-                    log.warn("Карта с id {} не найдена", cardId);
+                    log.warn("CardService: Карта с id {} не найдена", cardId);
                     return new CardException("Карта с id: " + cardId + " не найдена");
                 });
     }

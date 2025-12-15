@@ -36,12 +36,12 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthAndRegisterRequest authAndRegisterRequest) {
-        log.info("Попытка аутентификации пользователя: {}", authAndRegisterRequest.getEmail());
+        log.info("LoginController: Попытка аутентификации пользователя: {}", authAndRegisterRequest.getEmail());
 
         AuthResponse authResponse = loginService.authenticate(authAndRegisterRequest);
 
-        log.info("Пользователь {} успешно аутентифицирован", authAndRegisterRequest.getEmail());
-        log.debug("JWT token для {} сгенерирован: {}", authAndRegisterRequest.getEmail(), authResponse.getToken().substring(0, 10) + "...");
+        log.info("LoginController: Пользователь {} успешно аутентифицирован", authAndRegisterRequest.getEmail());
+        log.debug("LoginController: JWT token для {} сгенерирован: {}", authAndRegisterRequest.getEmail(), authResponse.getToken().substring(0, 10) + "...");
 
         return ResponseEntity.ok(authResponse);
     }

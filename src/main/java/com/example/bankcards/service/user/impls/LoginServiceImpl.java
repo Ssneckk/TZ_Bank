@@ -50,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public AuthResponse authenticate(AuthAndRegisterRequest authAndRegisterRequest){
         String email = authAndRegisterRequest.getEmail();
-        log.info("Попытка аутентификации пользователя с email: {}", email);
+        log.info("LoginService: Попытка аутентификации пользователя с email: {}", email);
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -61,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
         UserDetailsImpls userDetailsImpls = userDetailsServiceImpls.loadUserByUsername(authAndRegisterRequest.getEmail());
         String token = JwtProvider.generateToken(userDetailsImpls);
 
-        log.info("Пользователь успешно аутентифицирован: email={}",
+        log.info("LoginService: Пользователь успешно аутентифицирован: email={}",
                 email);
 
         return new AuthResponse(token);
